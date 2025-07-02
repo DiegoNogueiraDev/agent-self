@@ -10,6 +10,7 @@ setup(
     author_email='diego@example.com',
     install_requires=[
         'psutil',
+        'PyYAML',
     ],
     extras_require={
         'dev': [

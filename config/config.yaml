@@ -1,0 +1,14 @@
+# Main configuration for the Self-Healing AI Agent
+
+logging:
+  level: INFO
+  log_file: "logs/agent.log"
+
+predictor:
+  # The threshold above which a prediction is considered an anomaly.
+  # Values should be between 0.0 and 1.0.
+  threshold: 0.85
+
+main_loop:
+  # Interval in seconds between each data collection cycle.
+  interval_seconds: 10
