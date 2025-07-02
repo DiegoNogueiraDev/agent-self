@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: self-healing-agent
+Version: 0.1.0
+Summary: An AI agent for autonomous machine monitoring and self-remediation.
+Author: Diego Nogueira
+Author-email: diego@example.com
+Provides-Extra: dev
