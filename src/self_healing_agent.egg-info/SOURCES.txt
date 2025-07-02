@@ -5,6 +5,7 @@ src/collector/collector.py
 src/logger/__init__.py
 src/logger/logger.py
 src/predictor/__init__.py
+src/predictor/base.py
 src/predictor/predictor.py
 src/remediator/__init__.py
 src/remediator/actions.py
