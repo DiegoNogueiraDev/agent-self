@@ -1,0 +1,131 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Standard Operating Procedure (SOP) - Use Github MCP to manager all branchs follow the git glow bellow describe:
+
+
+Oficial flow - 
+
+graph TD
+    subgraph "Produção"
+        main
+    end
+
+    subgraph "Desenvolvimento"
+        develop
+    end
+
+    subgraph "Features (Trabalho do Dia a Dia)"
+        feature_branch["feature/nome-da-feature"]
+    end
+    
+    subgraph "Releases (Preparação para Lançamento)"
+        release_branch["release/v1.1.0"]
+    end
+    
+    subgraph "Correções Urgentes"
+        hotfix_branch["hotfix/bug-critico"]
+    end
+
+    main --"Criação Inicial"--> develop
+    develop --"Nova Feature"--> feature_branch
+    feature_branch --"Finaliza Feature"--> PR1(Pull Request para develop)
+    PR1 --"Aprova e Merge"--> develop
+
+    develop --"Inicia Release"--> release_branch
+    release_branch --"Finaliza Release"--> PR2(Pull Request para main)
+    PR2 --"Aprova e Lança"--> main
+    main --"Merge de volta"--> develop
+
+    main --"Bug Urgente"--> hotfix_branch
+    hotfix_branch --"Finaliza Correção"--> PR3(Pull Request para main)
+    PR3 --"Aprova e Lança"--> main
+    main --"Merge de volta (hotfix)"--> develop
+
+**Purpose**: Define the canonical workflow the conversational agent must follow to plan tasks with **Task‑Master** and operate on repositories through **MCP‑Git** using **Git Flow**. This document is version‑controlled and loaded automatically at session start.
+
+---
+
+## 1. Git Flow Rules
+
+1. **Initialise `develop`** — If it does not exist, create `develop` from `main`.
+2. **Feature branches** — For every task tagged `feature`, create `feature/<id>-<slug>` off `develop`.
+3. **Release branches** — When a stable set of features is ready, create `release/<version>` off `develop`.
+4. **Hotfix branches** — For production‑critical fixes, create `hotfix/<slug>` directly from `main`.
+5. **Back‑merge** — After merging `release/` or `hotfix/`, merge `main` back into `develop` (PR or fast‑forward).
+6. **Update `tasks.json`** — Add/refresh the `branch` field and ensure dependency order is preserved.
+7. **Commit handshake** — Record initial scaffolding in a commit titled:
+
+   ```text
+   chore(taskmaster): inicia fluxo git-flow
+   ```
+
+All branch creation, check‑outs and merges MUST use the MCP‑Git tool commands.
+
+---
+
+## 2. Pull‑Request Workflow
+
+| Branch type | Base branch | PR target | Task status change    |
+| ----------- | ----------- | --------- | --------------------- |
+| `feature/*` | `develop`   | `develop` | `done_ready_review`   |
+| `release/*` | `main`      | `main`    | `ready_release`       |
+| `hotfix/*`  | `main`      | `main`    | `hotfix_ready_review` |
+
+After merge, tasks move to `merged` and branches are deleted locally and remotely.
+
+### Required MCP‑Git Commands
+
+* `create_pull_request`
+* `list_pull_requests`
+* `merge_pull_request`
+* `update_pull_request_branch`
+* `get_pull_request_files`
+
+---
+
+## 3. Best Practices
+
+1. **Pull‑request template** — Add `.github/PULL_REQUEST_TEMPLATE.md` with:
+
+   * QA checklist
+   * Automatic issue closure reference (`Closes #<id>`)
+2. **Labels & Projects** — Auto‑apply labels like `size/S`, `type/bug`, `release/1.0` so Kanban reports stay accurate.
+3. **Mandatory CI** — Protect `main` and `develop` with *required status checks*; block direct pushes.
+4. **PR description generator** — Use the *Git PR Description Generator MCP* (e.g. `pulsemcp.com`) to autofill body text.
+5. **Notifications** — Schedule `list_pull_requests` in Task‑Master cron; alert when a PR is idle > 48 h.
+
+---
+
+## 4. Interaction Cheatsheet
+
+```text
+# Parse PRD and generate backlog
+Parse my PRD at .taskmaster/docs/prd.txt
+
+# Apply Git Flow rules instantly
+Apply Git Flow SOP now
+
+# Start work on task 18
+Checkout branch for task 18 and open todos
+
+# Open PR for completed feature
+Open PR for task 18 with reviewers @diego-nogueira @qa-team
+
+# Analyse PR security
+Analyse PR #42 for security issues
+```
+
+---
+
+## 5. Versioning This SOP
+
+* Increment the document version header when rules change.
+* Commit using `docs(sop): update git-flow rules to vX.Y`.
+* Ensure CI reloads the SOP for new sessions.
+
+---
+
+*Last updated: 2025‑06‑30*
