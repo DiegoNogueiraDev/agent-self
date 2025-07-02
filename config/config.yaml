@@ -3,6 +3,11 @@
 logging:
   level: INFO
   log_file: "logs/agent.log"
+  # Rotation settings for TimedRotatingFileHandler
+  rotation_when: "midnight" # How often to rotate (e.g., 'S', 'M', 'H', 'D', 'W0'-'W6', 'midnight')
+  rotation_interval: 1      # Interval for the 'when' parameter
+  rotation_backup_count: 7  # How many old log files to keep
+  compress_on_rotate: true  # Whether to compress rotated logs with gzip
 
 predictor:
   # The threshold above which a prediction is considered an anomaly.
