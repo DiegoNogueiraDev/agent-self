@@ -1,0 +1,37 @@
+# Task ID: 7
+# Title: Develop Root Cause Analysis (RCA) Functionality
+# Status: pending
+# Dependencies: 6
+# Priority: medium
+# Description: Implement functionality to identify the root cause of anomalies.
+# Details:
+Analyze the collected metrics to identify the process or application causing the anomaly, focusing on metrics like memory growth.
+
+# Test Strategy:
+Test the RCA functionality with known anomalies to ensure it correctly identifies the root cause.
+
+# Subtasks:
+## 1. Research visualization tools [pending]
+### Dependencies: 7.4
+### Description: Investigate existing visualization tools that can be integrated or adapted for RCA functionality.
+### Details:
+Identify key features and requirements for the visualization tool.
+
+## 4. Implement memory-based root cause analysis logic [pending]
+### Dependencies: None
+### Description: Identifies the top N processes consuming the most memory from a given system metric snapshot. This will be the core logic used by the Remediator.
+### Details:
+The function will receive a list of process dictionaries (as provided by the collector) and a number N. It will sort the processes by memory usage (e.g., 'memory_percent') in descending order and return the top N processes.
+
+## 2. Design visualization interface [pending]
+### Dependencies: 7.1
+### Description: Create a user-friendly interface for the visualization tool that effectively communicates RCA information.
+### Details:
+Consider user experience and accessibility in the design process.
+
+## 3. Integrate visualization tool with RCA functionality [pending]
+### Dependencies: 7.1, 7.2
+### Description: Combine the visualization tool with the RCA functionality to enhance the agent's ability to identify and communicate root causes.
+### Details:
+Ensure seamless integration and compatibility with existing systems.
+

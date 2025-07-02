@@ -1,0 +1,37 @@
+# Task ID: 6
+# Title: Implement Risk Score Thresholding
+# Status: done
+# Dependencies: 5
+# Priority: high
+# Description: Create a mechanism to trigger remediation actions based on a static risk score threshold.
+# Details:
+Define a configurable static threshold for risk scores. When the threshold is exceeded, trigger the remediation engine.
+
+# Test Strategy:
+Simulate different risk scores and verify that the remediation engine is triggered correctly when the static threshold is exceeded.
+
+# Subtasks:
+## 3. Implement Configuration Module [done]
+### Dependencies: None
+### Description: Create a new module `src/config/config.py` that is responsible for loading settings from a `config/config.yaml` file.
+### Details:
+Configuration module implementation
+
+## 4. Add Threshold to YAML Config [done]
+### Dependencies: 6.3
+### Description: Define a default `predictor_threshold` in the `config/config.yaml` file.
+### Details:
+YAML configuration setup
+
+## 5. Integrate Config into Main Loop [done]
+### Dependencies: 6.4
+### Description: Modify `src/main.py` to load the threshold from the config file and pass it to the Predictor.
+### Details:
+Integration of configuration into main application logic
+
+## 6. Write Unit Tests for Config Module [done]
+### Dependencies: 6.3
+### Description: Create tests to ensure the configuration is loaded correctly.
+### Details:
+Unit testing for configuration module
+

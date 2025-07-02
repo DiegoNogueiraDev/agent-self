@@ -1,0 +1,25 @@
+# Task ID: 4
+# Title: Configure Logging Mechanism
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# Description: Set up a logging mechanism to record agent activities using Python's logging module.
+# Details:
+Configure the logging module to log messages in JSON format. Ensure logs include timestamps, metric readings, and other relevant information.
+
+# Test Strategy:
+Generate log entries from the data collection module and verify that they are recorded correctly in the specified format.
+
+# Subtasks:
+## 1. Configure log rotation settings [done]
+### Dependencies: None
+### Description: Set up log rotation settings to manage log file size and prevent excessive growth.
+### Details:
+Configure log rotation settings such as log file size limit, number of rotated files to keep, and rotation schedule.
+
+## 2. Implement log compression [done]
+### Dependencies: 4.1
+### Description: Compress old log files to reduce storage space and improve performance.
+### Details:
+Set up a cron job or scheduled task to compress old log files using a compression tool like gzip.
+
