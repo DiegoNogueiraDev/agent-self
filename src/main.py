@@ -1,55 +1,56 @@
 import time
 from src.collector import SystemCollector
-from src.predictor import Predictor
-from src.logger import setup_logger
+from src.predictor import MockPredictor
 from src.config import get_config
+from src.logger import setup_logger
+from src.remediator import analyze_root_cause
 
-log = setup_logger("agent_main")
 
-def main_loop():
+def main():
     """
-    The main operational loop of the agent.
-    It collects, predicts, and will eventually trigger remediation.
+    Main loop for the self-healing agent.
     """
-    log.info("Initializing Self-Healing AI Agent...")
+    log = setup_logger(__name__)
+    log.info("Starting self-healing agent...")
+
+    config = get_config()
+    main_loop_config = config.get("main_loop", {})
+    interval_seconds = main_loop_config.get("interval_seconds", 60)
     
+    collector = SystemCollector()
+    predictor = MockPredictor()
+
+    log.info(f"Monitoring interval set to {interval_seconds} seconds.")
+
     try:
-        config = get_config()
-        log.info(f"Configuration loaded: {config}")
-
-        collector = SystemCollector()
-        
-        # Pass the predictor-specific config to the predictor
-        predictor_config = config.get("predictor", {})
-        predictor = Predictor(config=predictor_config)
-
-        main_loop_config = config.get("main_loop", {})
-        interval = main_loop_config.get("interval_seconds", 10)
-
-        log.info(f"Agent initialized. Starting monitoring loop with {interval}s interval...")
-
         while True:
-            # 1. Collect metrics
-            metrics = collector.collect_all_metrics()
-            log.debug(f"Collected metrics: {metrics}")
+            log.debug("Collecting system metrics...")
+            snapshot = collector.collect()
+            
+            log.debug("Analyzing metrics for anomalies...")
+            prediction = predictor.predict(snapshot)
 
-            # 2. Predict based on metrics
-            prediction = predictor.predict(metrics)
-            log.info(f"Prediction result: {prediction}")
+            if prediction.get('is_anomaly', False):
+                log.warning("Anomaly detected! Initiating root cause analysis.")
+                
+                # Analyze the snapshot that triggered the anomaly
+                top_offenders = analyze_root_cause(snapshot['processes'])
+                
+                if top_offenders:
+                    log.warning(f"Top memory offenders: {[p['name'] for p in top_offenders]}")
+                    # In a future task, we would take action here.
+                else:
+                    log.warning("RCA did not identify specific offending processes.")
 
-            if prediction.get("is_anomaly"):
-                log.warning(f"Anomaly detected! Score: {prediction.get('anomaly_score')}")
-                # TODO: Integrate with Remediator (Task 8)
+            else:
+                log.info("System state is normal.")
 
-            # Wait for the configured interval before the next cycle
-            time.sleep(interval)
-
-    except FileNotFoundError:
-        log.error("Configuration file not found. Please ensure 'config/config.yaml' exists.")
+            time.sleep(interval_seconds)
+            
     except KeyboardInterrupt:
-        log.info("Agent shutting down.")
+        log.info("Agent stopped by user.")
     except Exception as e:
         log.error(f"An unexpected error occurred in the main loop: {e}", exc_info=True)
 
 if __name__ == "__main__":
-    main_loop()
+    main()
