@@ -11,6 +11,12 @@ node_modules/
 
 # Environment variables
 .env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # Editor directories and files
 .idea
@@ -27,3 +33,10 @@ node_modules/
 # Task files
 # tasks.json
 # tasks/ 
+
+# Created by https://www.toptal.com/developers/gitignore/api/python
+# Edit at https://www.toptal.com/developers/gitignore?templates=python
+
+### Python ###
+#   ruff
+#   pyright 
