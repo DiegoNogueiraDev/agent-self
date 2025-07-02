@@ -321,7 +321,7 @@
             "title": "Implement memory-based root cause analysis logic",
             "description": "Identifies the top N processes consuming the most memory from a given system metric snapshot. This will be the core logic used by the Remediator.",
             "details": "The function will receive a list of process dictionaries (as provided by the collector) and a number N. It will sort the processes by memory usage (e.g., 'memory_percent') in descending order and return the top N processes.",
-            "status": "pending",
+            "status": "cancelled",
             "dependencies": [],
             "parentTaskId": 7
           },
@@ -360,7 +360,7 @@
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -368,7 +368,7 @@
             "description": "Research and document common issues that can arise from remediation actions in order to develop an effective safety check mechanism.",
             "dependencies": [],
             "details": "Gather information from existing literature, case studies, and expert opinions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -379,7 +379,7 @@
               1
             ],
             "details": "Consider the complexity of the issues and the potential impact on the system.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -390,7 +390,7 @@
               2
             ],
             "details": "Follow best practices for software development and testing.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -401,7 +401,7 @@
               3
             ],
             "details": "Use a combination of automated testing and manual testing techniques.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -689,7 +689,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-02T05:43:55.934Z",
+      "updated": "2025-07-02T05:53:08.758Z",
       "description": "Tasks for master context"
     }
   }
