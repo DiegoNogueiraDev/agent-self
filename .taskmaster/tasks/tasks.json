@@ -240,33 +240,55 @@
       {
         "id": 6,
         "title": "Implement Risk Score Thresholding",
-        "description": "Create a mechanism to trigger remediation actions based on risk scores.",
-        "details": "Define a configurable threshold for risk scores. When the threshold is exceeded, trigger the remediation engine.",
-        "testStrategy": "Simulate different risk scores and verify that the remediation engine is triggered correctly when the threshold is exceeded.",
-        "priority": "high",
+        "description": "Create a mechanism to trigger remediation actions based on a static risk score threshold.",
+        "status": "done",
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Define a configurable static threshold for risk scores. When the threshold is exceeded, trigger the remediation engine.",
+        "testStrategy": "Simulate different risk scores and verify that the remediation engine is triggered correctly when the static threshold is exceeded.",
         "subtasks": [
           {
-            "id": 1,
-            "title": "Research and define the algorithm for dynamic risk score threshold adjustment",
-            "description": "Investigate existing algorithms and methodologies for dynamic threshold adjustment based on historical data. Define the specific algorithm to be used in the implementation.",
+            "id": 3,
+            "title": "Implement Configuration Module",
+            "description": "Create a new module `src/config/config.py` that is responsible for loading settings from a `config/config.yaml` file.",
+            "status": "done",
             "dependencies": [],
-            "details": "Algorithm research and selection",
-            "status": "pending",
+            "details": "Configuration module implementation",
             "testStrategy": ""
           },
           {
-            "id": 2,
-            "title": "Implement the dynamic risk score threshold adjustment algorithm",
-            "description": "Develop and integrate the selected algorithm into the existing risk score system to enable dynamic threshold adjustment based on historical data.",
+            "id": 4,
+            "title": "Add Threshold to YAML Config",
+            "description": "Define a default `predictor_threshold` in the `config/config.yaml` file.",
+            "status": "done",
             "dependencies": [
-              1
+              3
             ],
-            "details": "Algorithm implementation and integration",
-            "status": "pending",
+            "details": "YAML configuration setup",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Config into Main Loop",
+            "description": "Modify `src/main.py` to load the threshold from the config file and pass it to the Predictor.",
+            "status": "done",
+            "dependencies": [
+              4
+            ],
+            "details": "Integration of configuration into main application logic",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Write Unit Tests for Config Module",
+            "description": "Create tests to ensure the configuration is loaded correctly.",
+            "status": "done",
+            "dependencies": [
+              3
+            ],
+            "details": "Unit testing for configuration module",
             "testStrategy": ""
           }
         ]
@@ -656,7 +678,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-02T05:22:32.079Z",
+      "updated": "2025-07-02T05:32:15.549Z",
       "description": "Tasks for master context"
     }
   }

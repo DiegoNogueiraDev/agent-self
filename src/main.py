@@ -2,6 +2,7 @@ import time
 from src.collector import SystemCollector
 from src.predictor import Predictor
 from src.logger import setup_logger
+from src.config import get_config
 
 log = setup_logger("agent_main")
 
@@ -11,16 +12,22 @@ def main_loop():
     It collects, predicts, and will eventually trigger remediation.
     """
     log.info("Initializing Self-Healing AI Agent...")
-
-    collector = SystemCollector()
     
-    # We can pass configuration to the predictor, e.g., the threshold
-    predictor_config = {"threshold": 0.85}
-    predictor = Predictor(config=predictor_config)
-
-    log.info("Agent initialized. Starting monitoring loop...")
-
     try:
+        config = get_config()
+        log.info(f"Configuration loaded: {config}")
+
+        collector = SystemCollector()
+        
+        # Pass the predictor-specific config to the predictor
+        predictor_config = config.get("predictor", {})
+        predictor = Predictor(config=predictor_config)
+
+        main_loop_config = config.get("main_loop", {})
+        interval = main_loop_config.get("interval_seconds", 10)
+
+        log.info(f"Agent initialized. Starting monitoring loop with {interval}s interval...")
+
         while True:
             # 1. Collect metrics
             metrics = collector.collect_all_metrics()
@@ -34,9 +41,11 @@ def main_loop():
                 log.warning(f"Anomaly detected! Score: {prediction.get('anomaly_score')}")
                 # TODO: Integrate with Remediator (Task 8)
 
-            # Wait for a defined interval before the next cycle
-            time.sleep(10) # 10-second interval
+            # Wait for the configured interval before the next cycle
+            time.sleep(interval)
 
+    except FileNotFoundError:
+        log.error("Configuration file not found. Please ensure 'config/config.yaml' exists.")
     except KeyboardInterrupt:
         log.info("Agent shutting down.")
     except Exception as e:

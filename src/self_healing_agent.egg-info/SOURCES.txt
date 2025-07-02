@@ -2,6 +2,8 @@ README.md
 setup.py
 src/collector/__init__.py
 src/collector/collector.py
+src/config/__init__.py
+src/config/config.py
 src/logger/__init__.py
 src/logger/logger.py
 src/predictor/__init__.py
