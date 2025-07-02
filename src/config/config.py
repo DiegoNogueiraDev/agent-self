@@ -1,34 +1,34 @@
 import yaml
 from pathlib import Path
 from typing import Dict, Any
-from src.logger import setup_logger
 
-log = setup_logger(__name__)
+_config_cache: Dict[str, Any] = {}
 
-_config: Dict[str, Any] = None
-_config_path = Path(__file__).parent.parent.parent / "config" / "config.yaml"
-
-def get_config() -> Dict[str, Any]:
+def get_config(path: str = "config/config.yaml") -> Dict[str, Any]:
     """
-    Loads the configuration from config/config.yaml and returns it.
-    It caches the configuration after the first read.
-    """
-    global _config
-    if _config is not None:
-        return _config
+    Loads the configuration from a YAML file and caches it.
+    
+    Args:
+        path (str): The path to the YAML config file.
 
-    if not _config_path.is_file():
-        log.error(f"Configuration file not found at: {_config_path}")
-        raise FileNotFoundError(f"Configuration file not found at: {_config_path}")
+    Returns:
+        A dictionary containing the configuration.
+    """
+    global _config_cache
+    
+    if path in _config_cache:
+        return _config_cache[path]
+
+    config_path = Path(path)
+    if not config_path.is_file():
+        raise FileNotFoundError(f"Configuration file not found at: {config_path}")
 
     try:
-        with open(_config_path, 'r') as f:
-            _config = yaml.safe_load(f)
-        log.info(f"Successfully loaded configuration from {_config_path}")
-        return _config
+        with open(config_path, 'r') as f:
+            config = yaml.safe_load(f)
+            _config_cache[path] = config
+            # Logging should be done by the caller, not the config loader.
+            return config
     except yaml.YAMLError as e:
-        log.error(f"Error parsing YAML configuration file: {e}", exc_info=True)
-        raise
-    except Exception as e:
-        log.error(f"An unexpected error occurred while loading configuration: {e}", exc_info=True)
-        raise 
+        # Let the caller handle the error and logging.
+        raise e 

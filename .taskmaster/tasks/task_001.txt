@@ -1,0 +1,25 @@
+# Task ID: 1
+# Title: Setup Project Repository
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Create a new Git repository for the Self-Healing AI Agent project.
+# Details:
+Initialize a Git repository in the project directory. Set up a README file and a .gitignore file to exclude unnecessary files. Use a branching strategy for feature development.
+
+# Test Strategy:
+Verify that the repository is created and accessible, and that the initial commit includes the README and .gitignore.
+
+# Subtasks:
+## 1. Create a new Git repository [done]
+### Dependencies: None
+### Description: Initialize a new Git repository for the project.
+### Details:
+Use the command 'git init' to create a new repository.
+
+## 2. Define branch naming conventions and commit message guidelines [done]
+### Dependencies: 1.1
+### Description: Establish branch naming conventions and commit message guidelines to maintain a clean and organized codebase.
+### Details:
+Create a CONTRIBUTING.md file to document the branch naming conventions and commit message guidelines.
+

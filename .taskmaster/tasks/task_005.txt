@@ -1,0 +1,43 @@
+# Task ID: 5
+# Title: Develop Anomaly Prediction Engine
+# Status: done
+# Dependencies: 3
+# Priority: high
+# Description: Create the initial structure for the Anomaly Prediction Engine by building a placeholder predictor that can be integrated with the collector.
+# Details:
+Focus on defining a predictor interface and implementing a mock predictor for testing purposes. The mock predictor will simulate anomaly scoring, allowing for integration with the data collector without requiring a full machine learning model implementation.
+
+# Test Strategy:
+Write unit tests to ensure the mock predictor functions correctly and integrates seamlessly with the main application loop.
+
+# Subtasks:
+## 1. Define Predictor Interface [done]
+### Dependencies: None
+### Description: Create the `BasePredictor` abstract class with `predict()` and `load_model()` methods.
+### Details:
+This interface will define the contract for any predictor implementation.
+
+## 2. Implement Mock Predictor [done]
+### Dependencies: 5.1
+### Description: Create a `MockPredictor` class that inherits from `BasePredictor` and returns a fixed or random anomaly score for testing purposes.
+### Details:
+This mock implementation will allow for testing the integration without a real model.
+
+## 3. Add Initial Predictor Logic [done]
+### Dependencies: 5.2
+### Description: Implement the basic structure of the `Predictor` class in `predictor.py`, which will be responsible for loading and running the chosen model.
+### Details:
+For now, this class will load the `MockPredictor` to facilitate testing.
+
+## 4. Write Unit Tests for Mock Predictor [done]
+### Dependencies: 5.2
+### Description: Create tests to ensure the `MockPredictor` behaves as expected.
+### Details:
+These tests will validate the functionality of the mock predictor.
+
+## 5. Integrate Predictor with Main Loop [done]
+### Dependencies: 5.3
+### Description: Update `main.py` to pass the metrics from the `Collector` to the `Predictor`.
+### Details:
+This integration will allow the main application to utilize the mock predictor for testing.
+
