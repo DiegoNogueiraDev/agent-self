@@ -1,9 +1,11 @@
 import time
+from collections import deque
 from src.collector import SystemCollector
-from src.predictor import MockPredictor
+from src.predictor import Predictor
 from src.config import get_config
 from src.logger import setup_logger
 from src.remediator import analyze_root_cause
+from src.visualizer import Visualizer
 
 
 def main():
@@ -15,10 +17,14 @@ def main():
 
     config = get_config()
     main_loop_config = config.get("main_loop", {})
+    predictor_config = config.get("predictor", {})
     interval_seconds = main_loop_config.get("interval_seconds", 60)
     
     collector = SystemCollector()
-    predictor = MockPredictor()
+    predictor = Predictor(predictor_config)
+    visualizer = Visualizer()
+
+    history = deque(maxlen=30)  # Store last 30 snapshots
 
     log.info(f"Monitoring interval set to {interval_seconds} seconds.")
 
@@ -26,12 +32,13 @@ def main():
         while True:
             log.debug("Collecting system metrics...")
             snapshot = collector.collect()
+            history.append(snapshot)
             
             log.debug("Analyzing metrics for anomalies...")
             prediction = predictor.predict(snapshot)
 
             if prediction.get('is_anomaly', False):
-                log.warning("Anomaly detected! Initiating root cause analysis.")
+                log.warning("Anomaly detected! Initiating root cause analysis and visualization.")
                 
                 # Analyze the snapshot that triggered the anomaly
                 top_offenders = analyze_root_cause(snapshot['processes'])
@@ -41,6 +48,13 @@ def main():
                     # In a future task, we would take action here.
                 else:
                     log.warning("RCA did not identify specific offending processes.")
+
+                # Visualize the metric that caused the anomaly
+                visualizer.plot_metric(
+                    data=list(history), 
+                    metric_name=prediction.get("metric_checked"), 
+                    threshold=prediction.get("threshold")
+                )
 
             else:
                 log.info("System state is normal.")

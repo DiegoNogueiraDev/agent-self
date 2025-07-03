@@ -3,3 +3,4 @@ config
 logger
 predictor
 remediator
+visualizer

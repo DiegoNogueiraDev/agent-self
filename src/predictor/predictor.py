@@ -1,47 +1,54 @@
 from .base import BasePredictor
 from typing import Dict, Any
-import random
 from src.logger.logger import setup_logger
 
 log = setup_logger(__name__)
 
-class MockPredictor(BasePredictor):
+class ThresholdPredictor(BasePredictor):
     """
-    A mock predictor for testing and development.
-    It returns a random anomaly score.
+    A simple predictor that triggers an anomaly if a metric exceeds a threshold.
     """
+    def __init__(self, config: Dict[str, Any]):
+        super().__init__(config)
+        self.metric_to_check = self.config.get("metric", "memory_percent")
+        self.threshold = self.config.get("threshold", 0.8)
+        log.info(f"ThresholdPredictor initialized. Checking metric '{self.metric_to_check}' against threshold '{self.threshold}'.")
 
     def load_model(self) -> None:
         """
-        Mock model loading. Does nothing.
+        No model to load for this simple predictor.
         """
-        log.info("MockPredictor: 'Loading' mock model.")
+        log.info("ThresholdPredictor: No model to load.")
         pass
 
     def predict(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generates a mock prediction.
+        Checks if the configured metric exceeds the threshold.
 
         Args:
-            metrics (Dict[str, Any]): System metrics (ignored in mock).
+            metrics (Dict[str, Any]): System metrics.
 
         Returns:
-            A dictionary with a random anomaly score.
+            A dictionary containing the prediction result.
         """
-        log.debug(f"MockPredictor: Received metrics for prediction: {metrics}")
+        log.debug(f"ThresholdPredictor: Received metrics for prediction: {metrics}")
         
-        # In a real scenario, this would be a sophisticated calculation.
-        # Here, we just generate a random float between 0.0 and 1.0.
-        anomaly_score = random.uniform(0.0, 1.0)
+        current_value = metrics.get(self.metric_to_check, 0)
+        is_anomaly = current_value > self.threshold
         
         prediction = {
-            "anomaly_score": anomaly_score,
-            "is_anomaly": anomaly_score > self.config.get("threshold", 0.8)
+            "metric_checked": self.metric_to_check,
+            "current_value": current_value,
+            "threshold": self.threshold,
+            "is_anomaly": is_anomaly
         }
         
-        log.info(f"MockPredictor: Generated prediction: {prediction}")
+        if is_anomaly:
+            log.warning(f"ThresholdPredictor: Anomaly detected! {prediction}")
+        else:
+            log.info(f"ThresholdPredictor: No anomaly detected. {prediction}")
+            
         return prediction
 
-# For now, the main Predictor class will just be an alias for the MockPredictor
-# until we implement the real one.
-Predictor = MockPredictor
+# The main Predictor class is now the ThresholdPredictor.
+Predictor = ThresholdPredictor

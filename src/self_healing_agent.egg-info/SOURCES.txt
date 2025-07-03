@@ -17,3 +17,5 @@ src/self_healing_agent.egg-info/SOURCES.txt
 src/self_healing_agent.egg-info/dependency_links.txt
 src/self_healing_agent.egg-info/requires.txt
 src/self_healing_agent.egg-info/top_level.txt
+src/visualizer/__init__.py
+src/visualizer/visualizer.py

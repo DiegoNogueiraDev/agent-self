@@ -2,3 +2,4 @@ psutil
 PyYAML
 pytest
 pytest-mock
+plotext

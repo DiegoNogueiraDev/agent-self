@@ -12,7 +12,9 @@ logging:
 predictor:
   # The threshold above which a prediction is considered an anomaly.
   # Values should be between 0.0 and 1.0.
-  threshold: 0.85
+  threshold: 0.40
+  # The metric to check against the threshold.
+  metric: "memory_percent"
 
 main_loop:
   # Interval in seconds between each data collection cycle.
