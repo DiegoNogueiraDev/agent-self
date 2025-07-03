@@ -1,5 +1,8 @@
 import pytest
 from src.remediator.remediator import analyze_root_cause
+from src.remediator.remediator import Remediator
+from unittest.mock import patch, MagicMock
+import time
 
 @pytest.fixture
 def sample_processes():
@@ -68,3 +71,59 @@ def test_analyze_root_cause_missing_memory_key():
     assert len(top_processes) == 2
     assert top_processes[0]['pid'] == 301
     assert top_processes[1]['pid'] == 302
+
+class TestRemediator:
+
+    @patch('src.remediator.remediator.kill_process_by_pid')
+    def test_remediation_adds_to_exclusion_list(self, mock_kill, sample_processes):
+        """
+        Test that after a remediation action, the PID is added to the exclusion list.
+        """
+        mock_kill.return_value = True  # Simulate successful kill
+        remediator = Remediator()
+        snapshot = {'processes': sample_processes}
+
+        offending_pid = 104
+        assert offending_pid not in remediator.exclusion_list
+
+        remediator.perform_remediation(snapshot)
+
+        mock_kill.assert_called_once_with(offending_pid)
+        assert offending_pid in remediator.exclusion_list
+
+    @patch('src.remediator.remediator.kill_process_by_pid')
+    def test_exclusion_list_prevents_remediation(self, mock_kill, sample_processes):
+        """
+        Test that a PID on the exclusion list is not actioned on again.
+        """
+        mock_kill.return_value = True
+        remediator = Remediator()
+        snapshot = {'processes': sample_processes}
+        offending_pid = 104
+
+        # First run: remediate and add to exclusion list
+        remediator.perform_remediation(snapshot)
+        mock_kill.assert_called_once_with(offending_pid)
+        assert offending_pid in remediator.exclusion_list
+
+        # Second run: the PID is on the exclusion list, so the next offender is picked.
+        remediator.perform_remediation(snapshot)
+        
+        # Assert that kill was called again, but for the next offender (102)
+        assert mock_kill.call_count == 2
+        mock_kill.assert_any_call(102)
+
+    def test_cleanup_exclusion_list(self):
+        """
+        Test that expired PIDs are removed from the exclusion list.
+        """
+        remediator = Remediator()
+        remediator.exclusion_list = {
+            101: time.time() - 301,  # Expired
+            102: time.time() + 300   # Not expired
+        }
+        
+        remediator._cleanup_exclusion_list()
+        
+        assert 101 not in remediator.exclusion_list
+        assert 102 in remediator.exclusion_list

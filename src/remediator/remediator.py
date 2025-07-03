@@ -56,10 +56,14 @@ class Remediator:
 
                 success = kill_process_by_pid(pid)
 
+                # ALWAYS add to exclusion list after an action is taken.
+                # The verification step will determine if the anomaly is truly gone.
+                # This prevents repeat actions on the same PID during verification.
+                log.info(f"Adding PID {pid} to exclusion list for 5 minutes to prevent remediation loops.")
+                self.exclusion_list[pid] = time.time() + 300
+
                 if not success:
-                    log.error(f"Remediation action failed for PID {pid}. Adding to exclusion list for 5 minutes.")
-                    # If action fails, add to exclusion list to prevent immediate retry
-                    self.exclusion_list[pid] = time.time() + 300 
+                    log.error(f"Remediation action failed for PID {pid}.")
             else:
                 log.error("Analysis identified an offender, but it has no PID.")
         
