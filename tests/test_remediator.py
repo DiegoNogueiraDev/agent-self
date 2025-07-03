@@ -3,6 +3,7 @@ from src.remediator.remediator import analyze_root_cause
 from src.remediator.remediator import Remediator
 from unittest.mock import patch, MagicMock
 import time
+import json
 
 @pytest.fixture
 def sample_processes():
@@ -73,6 +74,42 @@ def test_analyze_root_cause_missing_memory_key():
     assert top_processes[1]['pid'] == 302
 
 class TestRemediator:
+
+    @patch('src.remediator.remediator.log')
+    @patch('src.remediator.remediator.kill_process_by_pid')
+    def test_remediation_logs_structured_json(self, mock_kill, mock_log, sample_processes):
+        """
+        Test that a successful remediation logs a structured JSON message.
+        """
+        mock_kill.return_value = True
+        remediator = Remediator()
+        snapshot = {'processes': sample_processes, 'system': {'cpu_usage': 99.0}}
+        offending_pid = 104
+
+        remediator.perform_remediation(snapshot)
+        
+        # Find the specific log call that contains the JSON data
+        json_log_call = None
+        for call in mock_log.info.call_args_list:
+            arg = call.args[0]
+            if isinstance(arg, str) and arg.strip().startswith('{"action":'):
+                json_log_call = call
+                break
+        
+        assert json_log_call is not None, "Did not find the structured JSON log call."
+
+        # The actual log call with the JSON will be the first one.
+        logged_arg = json_log_call.args[0]
+        
+        # Parse the logged string as JSON
+        log_data = json.loads(logged_arg)
+
+        assert log_data['action'] == 'kill_process_by_pid'
+        assert log_data['pid'] == offending_pid
+        assert log_data['success'] is True
+        assert 'timestamp' in log_data
+        assert log_data['offender_details']['pid'] == offending_pid
+        assert log_data['snapshot_context'] == snapshot
 
     @patch('src.remediator.remediator.kill_process_by_pid')
     def test_remediation_adds_to_exclusion_list(self, mock_kill, sample_processes):

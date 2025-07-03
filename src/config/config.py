@@ -2,9 +2,6 @@ import yaml
 from pathlib import Path
 from typing import Dict, Any, Optional
 from .schema import AppConfig
-from src.logger.logger import setup_logger
-
-log = setup_logger(__name__)
 
 _config_cache: Optional[AppConfig] = None
 
@@ -25,7 +22,6 @@ def get_config(path: str = "config/config.yaml") -> AppConfig:
 
     config_path = Path(path)
     if not config_path.is_file():
-        log.error(f"Configuration file not found at: {config_path}")
         raise FileNotFoundError(f"Configuration file not found at: {config_path}")
 
     try:
@@ -34,11 +30,8 @@ def get_config(path: str = "config/config.yaml") -> AppConfig:
         
         config = AppConfig(**raw_config)
         _config_cache = config
-        log.info("Configuration loaded and validated successfully.")
         return config
     except yaml.YAMLError as e:
-        log.error(f"Error parsing YAML file: {e}")
         raise e
     except Exception as e: # Catches pydantic.ValidationError
-        log.error(f"Configuration validation error: {e}")
         raise e 
