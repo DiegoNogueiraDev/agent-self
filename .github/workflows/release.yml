@@ -5,10 +5,16 @@ on:
     tags:
       - 'v*.*.*'
 
+# Adiciona permissões para que a Action possa criar a release
+permissions:
+  contents: write
+
 jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,10 +34,11 @@ jobs:
         run: python setup.py sdist bdist_wheel
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: |
-            dist/*.tar.gz
-            dist/*.whl
+          # Gera as notas de lançamento automaticamente
+          generateReleaseNotes: true
+          # Anexa os artefatos da pasta dist/
+          artifacts: "dist/*.tar.gz,dist/*.whl"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
