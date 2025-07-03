@@ -12,7 +12,7 @@ logging:
 predictor:
   # The threshold above which a prediction is considered an anomaly.
   # Values should be between 0.0 and 100.0 for CPU percentage.
-  threshold: 80.0
+  threshold: 10.0
   # The metric to check against the threshold.
   metric: "cpu_percent"
 

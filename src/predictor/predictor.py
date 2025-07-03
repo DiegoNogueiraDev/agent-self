@@ -40,7 +40,8 @@ class ThresholdPredictor(BasePredictor):
             "metric_checked": self.metric_to_check,
             "current_value": current_value,
             "threshold": self.threshold,
-            "is_anomaly": is_anomaly
+            "is_anomaly": is_anomaly,
+            "anomaly_type": self.metric_to_check if is_anomaly else None
         }
         
         if is_anomaly:

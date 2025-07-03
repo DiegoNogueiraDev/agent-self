@@ -12,7 +12,16 @@ class SystemCollector:
     def __init__(self):
         """Initializes the SystemCollector."""
         self.logger = setup_logger(__name__)
-        self.logger.info("SystemCollector initialized.")
+        # Prime all process CPU counters on initialization.
+        # This is a requirement for psutil to return a non-zero CPU percentage
+        # on the first meaningful call.
+        for proc in psutil.process_iter(['pid']):
+            try:
+                p = psutil.Process(proc.info['pid'])
+                p.cpu_percent()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        self.logger.info("SystemCollector initialized and process CPU counters primed.")
 
     def collect(self) -> Dict[str, Any]:
         """
@@ -25,13 +34,22 @@ class SystemCollector:
         self.logger.debug("Starting metric collection cycle.")
         
         try:
-            # System-wide metrics
+            # First, iterate over all processes to start the cpu_percent calculation window.
+            # The first call to cpu_percent for a process is always 0.0.
+            for proc in psutil.process_iter(['cpu_percent']):
+                pass
+            
+            # Wait for a short interval for CPU usage to be measured.
+            time.sleep(1)
+
+            # System-wide metrics (now without interval, as we waited)
             system_metrics = {
-                'cpu_percent': psutil.cpu_percent(interval=1),
+                'cpu_percent': psutil.cpu_percent(),
                 'memory_percent': psutil.virtual_memory().percent
             }
             
-            # Per-process metrics
+            # Now, collect per-process metrics. The cpu_percent will be accurate
+            # for the interval we just slept.
             processes = []
             process_iter = psutil.process_iter([
                 'pid', 'name', 'username', 'cpu_percent', 'memory_percent', 'status'
@@ -136,13 +154,4 @@ class SystemCollector:
         except Exception as e:
             self.logger.error(f"Error gathering process details: {e}", exc_info=True)
             return {"error": str(e)}
-
-if __name__ == '__main__':
-    # Example usage:
-    collector = SystemCollector()
-    log.info("Starting collector example loop...")
-    while True:
-        metrics = collector.collect()
-        log.info(f"Collected metrics: {metrics}")
-        time.sleep(5)
 

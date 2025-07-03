@@ -1,43 +1,59 @@
 import psutil
 from src.logger import setup_logger
+from typing import List
 
 log = setup_logger(__name__)
 
-def kill_process_by_pid(pid: int) -> bool:
+def kill_processes_by_pids(pids: List[int]) -> bool:
     """
-    Terminates a process with the given PID.
+    Terminates a list of processes given their PIDs.
 
     Args:
-        pid (int): The process ID to terminate.
+        pids (List[int]): A list of process IDs to terminate.
 
     Returns:
-        bool: True if the process was terminated successfully, False otherwise.
+        bool: True if all processes were terminated successfully, False otherwise.
     """
-    try:
-        proc = psutil.Process(pid)
-        proc_name = proc.name()
-        
-        log.warning(f"Attempting to terminate process '{proc_name}' (PID: {pid})...")
-        proc.terminate()  # Sends SIGTERM, a graceful shutdown signal
-        
-        # Wait for the process to terminate
-        try:
-            proc.wait(timeout=3)
-            log.info(f"Process '{proc_name}' (PID: {pid}) terminated successfully.")
-            return True
-        except psutil.TimeoutExpired:
-            log.warning(f"Process '{proc_name}' (PID: {pid}) did not terminate gracefully. Forcing kill.")
-            proc.kill()  # Sends SIGKILL
-            proc.wait(timeout=3)
-            log.info(f"Process '{proc_name}' (PID: {pid}) killed successfully.")
-            return True
+    all_success = True
+    procs_to_wait = []
 
-    except psutil.NoSuchProcess:
-        log.error(f"Failed to kill process: No process with PID {pid} found.")
-        return False
-    except psutil.AccessDenied:
-        log.error(f"Failed to kill process {pid}: Access Denied. Agent may lack necessary permissions.")
-        return False
-    except Exception as e:
-        log.error(f"An unexpected error occurred while trying to kill process {pid}: {e}", exc_info=True)
-        return False
+    for pid in pids:
+        try:
+            proc = psutil.Process(pid)
+            procs_to_wait.append(proc)
+            log.warning(f"Sending terminate signal to process '{proc.name()}' (PID: {pid})...")
+            proc.terminate()
+        except psutil.NoSuchProcess:
+            log.warning(f"Process with PID {pid} not found, likely already terminated.")
+            continue
+        except psutil.AccessDenied:
+            log.error(f"Failed to terminate process {pid}: Access Denied.")
+            all_success = False
+            continue
+    
+    if not procs_to_wait:
+        return all_success
+
+    # Wait for all gracefully terminating processes
+    gone, alive = psutil.wait_procs(procs_to_wait, timeout=3)
+
+    # Force kill any remaining processes
+    for proc in alive:
+        log.warning(f"Process '{proc.name()}' (PID: {proc.pid}) did not terminate gracefully. Forcing kill.")
+        try:
+            proc.kill()
+        except psutil.AccessDenied:
+            log.error(f"Failed to force kill process {proc.pid}: Access Denied.")
+            all_success = False
+        except psutil.NoSuchProcess:
+            # Already gone, which is a success in this context
+            pass
+
+    # Final check
+    gone, alive = psutil.wait_procs(alive, timeout=3)
+    if alive:
+        for proc in alive:
+            log.error(f"Failed to kill process '{proc.name()}' (PID: {proc.pid}) even with force.")
+        all_success = False
+
+    return all_success

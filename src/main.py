@@ -1,11 +1,11 @@
 import time
 from collections import deque
-from src.collector import SystemCollector
-from src.predictor import Predictor
-from src.config import get_config
-from src.logger import setup_logger
-from src.remediator import Remediator
-from src.visualizer import Visualizer
+from collector import SystemCollector
+from predictor import Predictor
+from config import get_config
+from logger import setup_logger
+from remediator import Remediator
+from visualizer import Visualizer
 
 
 def verify_remediation(collector, predictor, remediator, log) -> bool:
@@ -28,7 +28,7 @@ def verify_remediation(collector, predictor, remediator, log) -> bool:
             # The remediator's exclusion list will prevent immediate re-action
             # on the same PID. We can try to remediate again in case a *different*
             # root cause has emerged.
-            remediator.perform_remediation(snapshot)
+            remediator.perform_remediation(prediction, snapshot)
             return False # Verification failed
 
     log.info("Verification successful. Anomaly appears to be resolved.")
@@ -79,7 +79,7 @@ def main():
                 else:
                     log.error("Cannot visualize anomaly: metric name or threshold not found in prediction.")
 
-                remediator.perform_remediation(snapshot)
+                remediator.perform_remediation(prediction, snapshot)
 
                 # Verify the outcome of the remediation
                 verify_remediation(collector, predictor, remediator, log)

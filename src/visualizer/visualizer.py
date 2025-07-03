@@ -19,9 +19,9 @@ class Visualizer:
         # Draw threshold line if it's within the plot limits
         min_val, max_val = min(values) if values else 0, max(values) if values else 0
         if min_val <= threshold <= max_val:
-            plt.axhline(y=threshold, color='red', linestyle='--', label=f'Threshold ({threshold})')
+            plt.horizontal_line(threshold, color='red')
 
-        plt.title(f'Metric: {metric_name}')
+        plt.title(f'Metric: {metric_name} (Threshold: {threshold}%)')
         plt.xlabel('Time (snapshot)')
         plt.ylabel('Value')
         plt.show() 

@@ -685,12 +685,70 @@
         ],
         "status": "done",
         "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Correct Data Flow in Main Loop",
+        "description": "Adjust the data flow in the main loop to pass the complete 'prediction' object to the remediator instead of just raw metrics.",
+        "details": "Modify the main loop in 'src/main.py' to ensure that the complete 'prediction' object, which includes 'anomaly_type', is passed to the remediation module. This involves identifying the current data flow and updating the relevant sections of the code to include the necessary attributes from the 'prediction' object. Ensure that the remediator can handle the complete object and execute the appropriate remediation actions based on the 'anomaly_type'.",
+        "testStrategy": "Test the updated main loop by simulating various anomaly predictions and verifying that the remediator receives the complete 'prediction' object. Check that the remediator correctly interprets the 'anomaly_type' and executes the appropriate remediation actions. Additionally, review the logs to ensure that the complete prediction details are being logged as expected.",
+        "status": "pending",
+        "dependencies": [
+          5,
+          11
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Correct CPU Collection in collector.py",
+        "description": "Modify the collect method in collector.py to ensure accurate CPU usage readings from the first measurement.",
+        "details": "The task involves updating the collect method in collector.py to introduce a delay after the first iteration of process readings. This will allow the second reading of cpu_percent to be valid and accurate. Specifically, implement a sleep interval (e.g., 1 second) after the first call to cpu_percent for each process. Ensure that the method handles exceptions and logs any errors encountered during the collection process. Additionally, update the logging to capture the timing of the readings for better traceability.",
+        "testStrategy": "To verify the implementation, run the collector.py and monitor the CPU readings for processes. Ensure that the first reading is not used for calculations and that the second reading is logged correctly. Compare the logged values against expected CPU usage metrics to confirm accuracy. Conduct tests under various load conditions to ensure consistent performance and accuracy of readings.",
+        "status": "pending",
+        "dependencies": [
+          3,
+          4
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Group Remediation for Offending Processes",
+        "description": "Enhance the Remediator to identify and terminate all related processes associated with an anomaly (sibling processes), rather than just a single process.",
+        "details": "The implementation will involve modifying the existing Remediator functionality to include logic that identifies all sibling processes related to a detected anomaly. This will require:\n1. Updating the anomaly detection logic to gather all processes that share the same parent or are otherwise related.\n2. Implementing a method to terminate these processes safely, ensuring that any necessary cleanup is performed to avoid resource leaks.\n3. Adding error handling to manage cases where processes cannot be terminated or do not respond as expected.\n4. Updating the logging mechanism to capture details about all processes terminated during remediation actions.\n5. Testing the new functionality with various scenarios to ensure it behaves as expected under different conditions.",
+        "testStrategy": "To verify the implementation, conduct the following tests:\n1. Simulate an anomaly that triggers the Remediator and verify that all related sibling processes are identified and terminated.\n2. Check the logs to ensure that all actions taken by the Remediator are recorded accurately, including the processes that were terminated.\n3. Test edge cases where no sibling processes exist to ensure the Remediator handles these scenarios gracefully without errors.\n4. Validate that the system remains stable and that no unintended side effects occur as a result of terminating sibling processes.",
+        "status": "pending",
+        "dependencies": [
+          7,
+          16
+        ],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-03T04:02:19.230Z",
+      "updated": "2025-07-03T04:39:32.888Z",
       "description": "Tasks for master context"
+    }
+  },
+  "hotfix-remediation-logic": {
+    "tasks": [],
+    "metadata": {
+      "created": "2025-07-03T04:29:16.922Z",
+      "updated": "2025-07-03T04:29:16.922Z",
+      "description": "Vou recriar a tag com um nome válido, substituindo a barra por um hífen."
+    }
+  },
+  "hotfix-remediation-improvements": {
+    "tasks": [],
+    "metadata": {
+      "created": "2025-07-03T04:39:04.573Z",
+      "updated": "2025-07-03T04:39:04.573Z",
+      "description": "Criar uma tag para rastrear as correções na lógica de remediação, baseada no nome da branch atual."
     }
   }
 }

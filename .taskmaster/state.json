@@ -1,6 +1,8 @@
 {
   "currentTag": "master",
   "lastSwitched": "2025-07-02T04:46:18.226Z",
-  "branchTagMapping": {},
+  "branchTagMapping": {
+    "hotfix/remediation-improvements": "hotfix-remediation-improvements"
+  },
   "migrationNoticeShown": true
 }
