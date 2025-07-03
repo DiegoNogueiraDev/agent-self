@@ -26,6 +26,7 @@ venv.bak/
 *.njsproj
 *.sln
 *.sw?
+.cursor/mcp.json
 
 # OS specific
 .DS_Store
