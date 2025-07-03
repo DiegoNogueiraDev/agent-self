@@ -1,130 +1,117 @@
+import unittest
 import subprocess
 import time
-import pytest
+import psutil
 import os
-import signal
-import json
 from pathlib import Path
 
-# Path to the agent's main script
-AGENT_MAIN_SCRIPT = "src/main.py"
-LOG_FILE = Path("logs/agent.log")
-CONFIG_FILE = "config/config.yaml"
-
-# A simple python script that allocates memory to act as the offender
-OFFENDER_SCRIPT_CONTENT = """
+# Script 'bomba' que consome memória
+MEMORY_BOMB_SCRIPT = """
 import time
 import sys
 
-# Allocate a large chunk of memory (e.g., 500 MB)
-try:
-    memory_hog = ' ' * (500 * 1024 * 1024)
-    print(f"Offender process (PID: {os.getpid()}) started and allocated memory.")
-except MemoryError:
-    print("Failed to allocate memory.")
-    sys.exit(1)
-
-# Keep the process alive
+megabytes_to_allocate = int(sys.argv[1]) if len(sys.argv) > 1 else 150
+print(f"MemoryBomb: Allocating {{megabytes_to_allocate}} MB of memory...")
+large_list = ['A' * 1024 * 1024] * megabytes_to_allocate
+print("MemoryBomb: Memory allocated. Now looping forever...")
 while True:
     time.sleep(1)
 """
 
-@pytest.fixture(scope="module")
-def setup_e2e_env():
-    # Ensure log directory exists and the log file is clean
-    LOG_FILE.parent.mkdir(exist_ok=True)
-    if LOG_FILE.exists():
-        LOG_FILE.unlink()
+AGENT_MAIN_SCRIPT = Path("src/main.py").resolve()
+BOMB_SCRIPT_PATH = Path("tests/e2e/memory_bomb.py").resolve()
 
-    # Create the offender script file
-    offender_script_path = Path("tests/e2e/offender.py")
-    offender_script_path.write_text(OFFENDER_SCRIPT_CONTENT)
+class TestAgentE2E(unittest.TestCase):
 
-    # Modify the agent's config for faster testing
-    # (e.g., shorter interval)
-    # For now, we'll use the default config
+    def setUp(self):
+        """Prepara o ambiente de teste E2E."""
+        # Cria o script 'bomba'
+        with open(BOMB_SCRIPT_PATH, "w") as f:
+            f.write(MEMORY_BOMB_SCRIPT)
+        
+        # Garante que nenhum processo do agente ou bomba esteja rodando
+        self._cleanup_processes()
 
-    yield offender_script_path
+    def tearDown(self):
+        """Limpa o ambiente após o teste."""
+        self._cleanup_processes()
+        # Remove o script 'bomba'
+        if os.path.exists(BOMB_SCRIPT_PATH):
+            os.remove(BOMB_SCRIPT_PATH)
 
-    # Teardown: remove offender script
-    if offender_script_path.exists():
-        offender_script_path.unlink()
-
-def start_process(command):
-    # Use Popen to start a non-blocking process
-    return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-def test_anomaly_detection_and_remediation(setup_e2e_env):
-    offender_script = setup_e2e_env
-    agent_process = None
-    offender_process = None
-
-    try:
-        # Start the offender process
-        offender_process = start_process(["python3", str(offender_script)])
-        time.sleep(2) # Give it time to start and allocate memory
-        offender_pid = offender_process.pid
-        print(f"Started offender with PID: {offender_pid}")
-
-        # Start the agent
-        agent_process = start_process(["python3", AGENT_MAIN_SCRIPT])
-        print(f"Started agent with PID: {agent_process.pid}")
-
-        # Monitor the log file for the remediation action
-        remediation_logged = False
-        start_time = time.time()
-        timeout = 90 # seconds
-
-        while time.time() - start_time < timeout:
-            if not LOG_FILE.exists():
-                time.sleep(1)
+    def _cleanup_processes(self):
+        """Garante que processos de testes anteriores sejam finalizados."""
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline = ' '.join(proc.info.get('cmdline') or [])
+                is_agent = str(AGENT_MAIN_SCRIPT) in cmdline
+                is_bomb = str(BOMB_SCRIPT_PATH) in cmdline
+                
+                if is_agent or is_bomb:
+                    print(f"Cleanup: Terminating dangling process {proc.info['name']} (PID: {proc.info['pid']})")
+                    proc.terminate()
+                    proc.wait(timeout=3)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
+            except psutil.TimeoutExpired:
+                proc.kill()
 
-            with open(LOG_FILE, 'r') as f:
-                for line in f:
-                    try:
-                        # Find the start of the JSON object
-                        json_start_index = line.find('{')
-                        if json_start_index == -1:
-                            continue
-                        
-                        log_json_str = line[json_start_index:]
-                        log_data = json.loads(log_json_str)
 
-                        # Check if this is the remediation log we are looking for
-                        if (log_data.get('action') == 'kill_process_by_pid' and 
-                            log_data.get('pid') == offender_pid):
-                            
-                            print(f"Found remediation log for PID {offender_pid}: {log_json_str.strip()}")
-                            assert log_data.get('success') is True, "Remediation was logged as unsuccessful."
-                            remediation_logged = True
-                            break
+    def test_agent_detects_and_remediates_memory_bomb(self):
+        """
+        Teste E2E: Inicia um processo que consome muita memória e verifica se o agente o finaliza.
+        """
+        bomb_process = None
+        agent_process = None
+        
+        try:
+            # 1. Inicia o processo 'bomba' de memória
+            bomb_process = subprocess.Popen(["python3", str(BOMB_SCRIPT_PATH), "200"]) # Aloca 200MB
+            self.assertIsNotNone(bomb_process.pid, "Falha ao iniciar o processo 'bomba' de memória.")
+            print(f"Started memory bomb process with PID: {bomb_process.pid}")
+            time.sleep(2) # Dá tempo para o processo alocar memória
 
-                    except (json.JSONDecodeError, KeyError):
-                        # Ignore lines that are not valid JSON or don't have the expected keys
-                        continue
+            # Verifica se a bomba está rodando
+            self.assertTrue(psutil.pid_exists(bomb_process.pid), "Processo bomba não está rodando após o início.")
+
+            # 2. Inicia o Agente de Auto-Recuperação
+            agent_process = subprocess.Popen(
+                ["python3", str(AGENT_MAIN_SCRIPT)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            self.assertIsNotNone(agent_process.pid, "Falha ao iniciar o agente.")
+            print(f"Started agent process with PID: {agent_process.pid}")
+
+            # 3. Aguarda o agente agir (ciclos de coleta + remediação)
+            # O agente deve detectar e matar a bomba. Damos um tempo generoso.
+            max_wait_time = 30  # segundos
+            bomb_terminated = False
+            end_time = time.time() + max_wait_time
+
+            while time.time() < end_time:
+                if bomb_process.poll() is not None: # Processo terminou
+                    bomb_terminated = True
+                    break
+                time.sleep(1)
+
+            # 4. Verifica se o processo 'bomba' foi finalizado
+            self.assertTrue(bomb_terminated, 
+                f"O agente falhou em finalizar o processo 'bomba' (PID: {bomb_process.pid}) dentro de {max_wait_time} segundos.")
             
-            if remediation_logged:
-                break
+            print(f"Success: Agent terminated memory bomb process (PID: {bomb_process.pid}).")
             
-            print("...waiting for remediation log...")
-            time.sleep(2)
+            # Opcional: Verificar logs do agente para a ação de remediação
+            stdout, stderr = agent_process.communicate(timeout=5)
+            self.assertIn("kill_process_by_pid", stdout, "A ação de matar o processo não foi logada na saída do agente.")
+            
+        finally:
+            # Garante que todos os processos sejam finalizados
+            if agent_process and agent_process.poll() is None:
+                agent_process.terminate()
+            if bomb_process and bomb_process.poll() is None:
+                bomb_process.terminate()
 
-        assert remediation_logged, "Remediation action was not logged within the timeout."
-
-        # Verify that the offender process was actually killed
-        time.sleep(2) # Give time for the process to terminate
-        poll_result = offender_process.poll()
-        assert poll_result is not None, "Offender process was not terminated."
-
-    finally:
-        # Cleanup
-        print("Cleaning up processes...")
-        if agent_process and agent_process.poll() is None:
-            agent_process.terminate()
-            agent_process.wait()
-            print("Agent process terminated.")
-        if offender_process and offender_process.poll() is None:
-            offender_process.terminate()
-            offender_process.wait()
-            print("Offender process terminated.") 
+if __name__ == '__main__':
+    unittest.main() 
