@@ -11,10 +11,47 @@ logging:
 
 predictor:
   # The threshold above which a prediction is considered an anomaly.
-  # Values should be between 0.0 and 1.0.
-  threshold: 0.40
+  # Values should be between 0.0 and 100.0 for CPU percentage.
+  threshold: 80.0
   # The metric to check against the threshold.
-  metric: "memory_percent"
+  metric: "cpu_percent"
+
+remediator:
+  # List of processes that should never be killed by the remediation system
+  process_whitelist:
+    - "systemd"
+    - "kthreadd"
+    - "ksoftirqd"
+    - "migration"
+    - "rcu_"
+    - "watchdog"
+    - "sshd"
+    - "NetworkManager"
+    - "dbus"
+    - "gnome-session"
+    - "gnome-shell"
+    - "Xorg"
+    - "gdm"
+    - "pulseaudio"
+    - "bluetoothd"
+    - "avahi-daemon"
+    - "cups"
+    - "cursor"
+    - "code"
+    - "chrome"
+    - "firefox"
+    - "terminal"
+    - "warp"
+    - "bash"
+    - "zsh"
+    - "fish"
+    - "python"
+  
+  # Minimum memory threshold (in percentage) below which processes won't be killed
+  min_memory_threshold: 5.0
+  
+  # Exclusion period in seconds - how long to wait before considering the same process again
+  exclusion_period_seconds: 300
 
 main_loop:
   # Interval in seconds between each data collection cycle.
