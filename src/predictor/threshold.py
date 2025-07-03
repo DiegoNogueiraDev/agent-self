@@ -1,6 +1,6 @@
-from .base import BasePredictor
 from typing import Dict, Any
 from src.logger.logger import setup_logger
+from .base import BasePredictor
 
 log = setup_logger(__name__)
 
@@ -48,7 +48,4 @@ class ThresholdPredictor(BasePredictor):
         else:
             log.info(f"ThresholdPredictor: No anomaly detected. {prediction}")
             
-        return prediction
-
-# The main Predictor class is now the ThresholdPredictor.
-Predictor = ThresholdPredictor
+        return prediction 

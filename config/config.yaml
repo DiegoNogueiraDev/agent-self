@@ -10,11 +10,21 @@ logging:
   compress_on_rotate: true  # Whether to compress rotated logs with gzip
 
 predictor:
+  # type can be 'threshold' or 'isolation_forest'
+  type: "threshold" 
+  
   # The threshold above which a prediction is considered an anomaly.
   # Values should be between 0.0 and 100.0 for CPU percentage.
+  # Used only by the 'threshold' predictor.
   threshold: 80.0
+  
   # The metric to check against the threshold.
+  # Used only by the 'threshold' predictor.
   metric: "cpu_percent"
+
+  # Path to the trained model file.
+  # Used only by the 'isolation_forest' predictor.
+  model_path: "models/isolation_forest_model.joblib"
 
 remediator:
   # List of processes that should never be killed by the remediation system

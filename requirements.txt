@@ -5,3 +5,6 @@ pytest-mock
 plotext
 numpy
 pydantic
+joblib
+scikit-learn
+pandas

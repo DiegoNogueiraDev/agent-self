@@ -1,6 +1,8 @@
 {
-  "currentTag": "master",
-  "lastSwitched": "2025-07-02T04:46:18.226Z",
-  "branchTagMapping": {},
+  "currentTag": "feature-intel-preditiva",
+  "lastSwitched": "2025-07-03T04:44:03.407Z",
+  "branchTagMapping": {
+    "feature/intel-preditiva": "feature-intel-preditiva"
+  },
   "migrationNoticeShown": true
 }

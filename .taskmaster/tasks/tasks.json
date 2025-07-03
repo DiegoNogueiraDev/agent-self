@@ -3,694 +3,351 @@
     "tasks": [
       {
         "id": 1,
-        "title": "Setup Project Repository",
-        "description": "Create a new Git repository for the Self-Healing AI Agent project.",
-        "details": "Initialize a Git repository in the project directory. Set up a README file and a .gitignore file to exclude unnecessary files. Use a branching strategy for feature development.",
-        "testStrategy": "Verify that the repository is created and accessible, and that the initial commit includes the README and .gitignore.",
-        "priority": "medium",
+        "title": "Create IsolationForestPredictor Class",
+        "description": "Implement the IsolationForestPredictor class in the predictor.py file.",
+        "details": "Create a new class named IsolationForestPredictor in src/predictor/predictor.py that inherits from BasePredictor. Ensure to follow Python class inheritance conventions.",
+        "testStrategy": "Write unit tests to verify that the class is instantiated correctly and inherits from BasePredictor.",
+        "priority": "high",
         "dependencies": [],
         "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create a new Git repository",
-            "description": "Initialize a new Git repository for the project.",
-            "dependencies": [],
-            "details": "Use the command 'git init' to create a new repository.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Define branch naming conventions and commit message guidelines",
-            "description": "Establish branch naming conventions and commit message guidelines to maintain a clean and organized codebase.",
-            "dependencies": [
-              1
-            ],
-            "details": "Create a CONTRIBUTING.md file to document the branch naming conventions and commit message guidelines.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
+        "subtasks": []
       },
       {
         "id": 2,
-        "title": "Define Project Structure",
-        "description": "Establish a modular directory structure for the project components.",
-        "details": "Create directories for each module: Collector, Predictor, Remediator, and Logger. Each module should have its own subdirectory for scripts and tests.",
-        "testStrategy": "Ensure that the directory structure is created correctly and that each module has a placeholder script.",
-        "priority": "medium",
+        "title": "Implement load_model Method",
+        "description": "Add the load_model method to the IsolationForestPredictor class.",
+        "details": "Implement the load_model method that loads a trained IsolationForest model from a specified file (e.g., model.joblib). Use joblib to deserialize the model.",
+        "testStrategy": "Create tests to ensure that the load_model method correctly loads a model and handles errors when the file does not exist.",
+        "priority": "high",
         "dependencies": [
           1
         ],
         "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create a directory structure diagram",
-            "description": "Design a detailed diagram of the project's directory structure, including all necessary folders and files.",
-            "dependencies": [],
-            "details": "The diagram should clearly represent the hierarchy and organization of the project.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Document the purpose of each module",
-            "description": "Write a detailed document explaining the purpose and functionality of each module within the project.",
-            "dependencies": [
-              1
-            ],
-            "details": "The document should be easy to understand and follow for new team members.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Perform complexity analysis",
-            "description": "Analyze the project's complexity and identify any potential issues or areas for improvement.",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "The analysis should consider maintainability, scalability, and ease of understanding.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
+        "subtasks": []
       },
       {
         "id": 3,
-        "title": "Implement Data Collection Module",
-        "description": "Develop the data collection module to gather system metrics using the psutil library.",
-        "details": "Use the psutil library to collect CPU, memory, disk I/O, and network I/O metrics at configurable intervals. Implement a function to return these metrics in a structured format (e.g., JSON).",
-        "testStrategy": "Run the data collection module and verify that it returns accurate metrics for the system.",
+        "title": "Implement predict Method",
+        "description": "Add the predict method to the IsolationForestPredictor class.",
+        "details": "Implement the predict method that takes system metrics as input, preprocesses them if necessary, and uses the loaded model to return predictions. The output should be a dictionary with the key 'is_anomaly'.",
+        "testStrategy": "Write tests to validate the predict method's output format and correctness based on known input metrics.",
         "priority": "high",
         "dependencies": [
           2
         ],
         "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Implement error handling in the data collection module",
-            "description": "Add try-except blocks to catch and handle exceptions during data collection.",
-            "dependencies": [],
-            "details": "Implement error handling to gracefully handle exceptions and prevent the module from crashing.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Add logging functionality to the data collection module",
-            "description": "Integrate a logging system to record important events and errors during data collection.",
-            "dependencies": [
-              1
-            ],
-            "details": "Implement logging to help with debugging and monitoring the module's performance.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Test error handling and logging in various scenarios",
-            "description": "Simulate different error conditions and verify that the error handling and logging work as expected.",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Test the implemented error handling and logging to ensure they cover all necessary scenarios.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Refine error handling and logging based on test results",
-            "description": "Adjust the error handling and logging based on the test results to improve the module's robustness.",
-            "dependencies": [
-              3
-            ],
-            "details": "Refine the error handling and logging to handle edge cases and improve the module's overall performance.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
+        "subtasks": []
       },
       {
         "id": 4,
-        "title": "Configure Logging Mechanism",
-        "description": "Set up a logging mechanism to record agent activities using Python's logging module.",
-        "details": "Configure the logging module to log messages in JSON format. Ensure logs include timestamps, metric readings, and other relevant information.",
-        "testStrategy": "Generate log entries from the data collection module and verify that they are recorded correctly in the specified format.",
+        "title": "Create Training Script",
+        "description": "Develop a script for training the anomaly detection model.",
+        "details": "Create a new script named train_anomaly_model.py in the scripts directory. This script should read a dataset (CSV format), train an IsolationForest model, and save it using joblib.",
+        "testStrategy": "Test the script with a sample dataset to ensure it trains the model correctly and saves it to the specified path.",
         "priority": "medium",
-        "dependencies": [
-          2
-        ],
+        "dependencies": [],
         "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Configure log rotation settings",
-            "description": "Set up log rotation settings to manage log file size and prevent excessive growth.",
-            "dependencies": [],
-            "details": "Configure log rotation settings such as log file size limit, number of rotated files to keep, and rotation schedule.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Implement log compression",
-            "description": "Compress old log files to reduce storage space and improve performance.",
-            "dependencies": [
-              1
-            ],
-            "details": "Set up a cron job or scheduled task to compress old log files using a compression tool like gzip.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
+        "subtasks": []
       },
       {
         "id": 5,
-        "title": "Develop Anomaly Prediction Engine",
-        "description": "Create the initial structure for the Anomaly Prediction Engine by building a placeholder predictor that can be integrated with the collector.",
+        "title": "Update Configuration File",
+        "description": "Modify the config.yaml file to include new predictor settings.",
+        "details": "Update the config/config.yaml file to allow selection of the IsolationForestPredictor and add a model_path field for the trained model's file path.",
+        "testStrategy": "Verify that the configuration file can be read correctly and that the new fields are accessible in the application.",
+        "priority": "medium",
+        "dependencies": [],
         "status": "done",
-        "dependencies": [
-          3
-        ],
-        "priority": "high",
-        "details": "Focus on defining a predictor interface and implementing a mock predictor for testing purposes. The mock predictor will simulate anomaly scoring, allowing for integration with the data collector without requiring a full machine learning model implementation.",
-        "testStrategy": "Write unit tests to ensure the mock predictor functions correctly and integrates seamlessly with the main application loop.",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Define Predictor Interface",
-            "description": "Create the `BasePredictor` abstract class with `predict()` and `load_model()` methods.",
-            "status": "done",
-            "dependencies": [],
-            "details": "This interface will define the contract for any predictor implementation.",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Implement Mock Predictor",
-            "description": "Create a `MockPredictor` class that inherits from `BasePredictor` and returns a fixed or random anomaly score for testing purposes.",
-            "status": "done",
-            "dependencies": [
-              1
-            ],
-            "details": "This mock implementation will allow for testing the integration without a real model.",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Add Initial Predictor Logic",
-            "description": "Implement the basic structure of the `Predictor` class in `predictor.py`, which will be responsible for loading and running the chosen model.",
-            "status": "done",
-            "dependencies": [
-              2
-            ],
-            "details": "For now, this class will load the `MockPredictor` to facilitate testing.",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Write Unit Tests for Mock Predictor",
-            "description": "Create tests to ensure the `MockPredictor` behaves as expected.",
-            "status": "done",
-            "dependencies": [
-              2
-            ],
-            "details": "These tests will validate the functionality of the mock predictor.",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Integrate Predictor with Main Loop",
-            "description": "Update `main.py` to pass the metrics from the `Collector` to the `Predictor`.",
-            "status": "done",
-            "dependencies": [
-              3
-            ],
-            "details": "This integration will allow the main application to utilize the mock predictor for testing.",
-            "testStrategy": ""
-          }
-        ]
+        "subtasks": []
       },
       {
         "id": 6,
-        "title": "Implement Risk Score Thresholding",
-        "description": "Create a mechanism to trigger remediation actions based on a static risk score threshold.",
-        "status": "done",
+        "title": "Adjust Predictor Initialization Logic",
+        "description": "Modify the initialization logic in the predictor module to support the new predictor.",
+        "details": "Update the logic in src/predictor/__init__.py or src/main.py to instantiate the IsolationForestPredictor based on the new configuration settings.",
+        "testStrategy": "Test the application startup to ensure the correct predictor is instantiated based on the configuration.",
+        "priority": "medium",
         "dependencies": [
           5
         ],
-        "priority": "high",
-        "details": "Define a configurable static threshold for risk scores. When the threshold is exceeded, trigger the remediation engine.",
-        "testStrategy": "Simulate different risk scores and verify that the remediation engine is triggered correctly when the static threshold is exceeded.",
-        "subtasks": [
-          {
-            "id": 3,
-            "title": "Implement Configuration Module",
-            "description": "Create a new module `src/config/config.py` that is responsible for loading settings from a `config/config.yaml` file.",
-            "status": "done",
-            "dependencies": [],
-            "details": "Configuration module implementation",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Add Threshold to YAML Config",
-            "description": "Define a default `predictor_threshold` in the `config/config.yaml` file.",
-            "status": "done",
-            "dependencies": [
-              3
-            ],
-            "details": "YAML configuration setup",
-            "testStrategy": ""
-          },
-          {
-            "id": 5,
-            "title": "Integrate Config into Main Loop",
-            "description": "Modify `src/main.py` to load the threshold from the config file and pass it to the Predictor.",
-            "status": "done",
-            "dependencies": [
-              4
-            ],
-            "details": "Integration of configuration into main application logic",
-            "testStrategy": ""
-          },
-          {
-            "id": 6,
-            "title": "Write Unit Tests for Config Module",
-            "description": "Create tests to ensure the configuration is loaded correctly.",
-            "status": "done",
-            "dependencies": [
-              3
-            ],
-            "details": "Unit testing for configuration module",
-            "testStrategy": ""
-          }
-        ]
+        "status": "done",
+        "subtasks": []
       },
       {
         "id": 7,
-        "title": "Develop Root Cause Analysis (RCA) Functionality",
-        "description": "Implement functionality to identify the root cause of anomalies.",
-        "details": "Analyze the collected metrics to identify the process or application causing the anomaly, focusing on metrics like memory growth.",
-        "testStrategy": "Test the RCA functionality with known anomalies to ensure it correctly identifies the root cause.",
-        "priority": "medium",
+        "title": "Performance Testing",
+        "description": "Ensure that the new module does not introduce significant performance overhead.",
+        "details": "Conduct performance tests to measure the prediction time of the IsolationForestPredictor and compare it with the previous ThresholdPredictor.",
+        "testStrategy": "Run benchmarks to compare prediction times and ensure they meet the non-functional requirements.",
+        "priority": "low",
         "dependencies": [
-          6
+          3
         ],
-        "status": "done",
+        "status": "pending",
         "subtasks": [
           {
             "id": 1,
-            "title": "Research visualization tools",
-            "description": "Investigate existing visualization tools that can be integrated or adapted for RCA functionality.",
-            "dependencies": [
-              "7.4"
-            ],
-            "details": "Identify key features and requirements for the visualization tool.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 4,
-            "title": "Implement memory-based root cause analysis logic",
-            "description": "Identifies the top N processes consuming the most memory from a given system metric snapshot. This will be the core logic used by the Remediator.",
-            "details": "The function will receive a list of process dictionaries (as provided by the collector) and a number N. It will sort the processes by memory usage (e.g., 'memory_percent') in descending order and return the top N processes.",
-            "status": "done",
+            "title": "Research visualization libraries",
+            "description": "Identify and evaluate potential visualization libraries that can be integrated with the RCA functionality.",
             "dependencies": [],
-            "parentTaskId": 7
+            "details": "Compare libraries based on factors such as ease of use, compatibility, and visualization capabilities.",
+            "status": "pending",
+            "testStrategy": ""
           },
           {
             "id": 2,
             "title": "Design visualization interface",
-            "description": "Create a user-friendly interface for the visualization tool that effectively communicates RCA information.",
+            "description": "Create a user-friendly interface for the visualization tool that integrates seamlessly with the RCA functionality.",
             "dependencies": [
               1
             ],
-            "details": "Consider user experience and accessibility in the design process.",
-            "status": "done",
+            "details": "Consider the layout, controls, and visual elements that will be most effective for communicating root causes.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 3,
-            "title": "Integrate visualization tool with RCA functionality",
-            "description": "Combine the visualization tool with the RCA functionality to enhance the agent's ability to identify and communicate root causes.",
+            "title": "Integrate visualization with RCA functionality",
+            "description": "Integrate the visualization tool with the RCA functionality to enhance the agent's ability to identify and communicate root causes.",
             "dependencies": [
               1,
               2
             ],
-            "details": "Ensure seamless integration and compatibility with existing systems.",
-            "status": "done",
+            "details": "Ensure that the visualization tool can be easily updated and maintained as the RCA functionality evolves.",
+            "status": "pending",
             "testStrategy": ""
           }
         ]
       },
       {
         "id": 8,
-        "title": "Implement Remediation Actions Library",
-        "description": "Create a library of remediation actions that the agent can perform.",
-        "details": "Develop functions for each remediation action (e.g., restarting processes, clearing caches). Ensure actions are executed safely with safeguards.",
-        "testStrategy": "Test each remediation action to ensure it performs as expected without causing additional issues.",
-        "priority": "high",
-        "dependencies": [
-          7
-        ],
-        "status": "done",
+        "title": "Update Project Documentation",
+        "description": "Revise the documentation to reflect the new predictive capabilities.",
+        "details": "Update DOCUMENTATION.md and README.md to include information about the IsolationForestPredictor, how to train it, and its usage.",
+        "testStrategy": "Review the documentation for clarity and completeness, ensuring it accurately describes the new features.",
+        "priority": "low",
+        "dependencies": [],
+        "status": "pending",
         "subtasks": [
           {
             "id": 1,
-            "title": "Identify potential issues caused by remediation actions",
-            "description": "Research and document common issues that can arise from remediation actions in order to develop an effective safety check mechanism.",
+            "title": "Define safety check requirements",
+            "description": "Identify the types of potential issues that remediation actions can cause and determine the necessary safety checks to prevent them.",
             "dependencies": [],
-            "details": "Gather information from existing literature, case studies, and expert opinions.",
-            "status": "done",
+            "details": "Safety checks should cover issues like data loss, system instability, and unintended side effects.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 2,
-            "title": "Design safety checks for identified issues",
-            "description": "Create a set of safety checks that can be integrated into the remediation actions library to prevent the identified issues.",
+            "title": "Develop safety check algorithms",
+            "description": "Create algorithms that will be used to perform safety checks before executing remediation actions.",
             "dependencies": [
               1
             ],
-            "details": "Consider the complexity of the issues and the potential impact on the system.",
-            "status": "done",
+            "details": "Algorithms should be efficient and effective in identifying potential issues.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 3,
-            "title": "Implement safety checks in the remediation actions library",
-            "description": "Integrate the designed safety checks into the remediation actions library, ensuring they are properly tested and validated.",
+            "title": "Integrate safety checks into remediation actions library",
+            "description": "Modify the remediation actions library to include the developed safety checks.",
             "dependencies": [
               2
             ],
-            "details": "Follow best practices for software development and testing.",
-            "status": "done",
+            "details": "Ensure that safety checks are seamlessly integrated and do not impact the library's performance.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 4,
-            "title": "Test and validate the safety check mechanism",
-            "description": "Conduct thorough testing and validation of the safety check mechanism to ensure its effectiveness and reliability.",
+            "title": "Test safety checks",
+            "description": "Conduct thorough testing of the integrated safety checks to ensure they effectively prevent potential issues.",
             "dependencies": [
               3
             ],
-            "details": "Use a combination of automated testing and manual testing techniques.",
-            "status": "done",
+            "details": "Test cases should cover various scenarios, including edge cases.",
+            "status": "pending",
             "testStrategy": ""
           }
         ]
       },
       {
         "id": 9,
-        "title": "Integrate Remediation Engine",
-        "description": "Integrate the remediation engine with the anomaly prediction and RCA functionalities.",
-        "details": "Ensure that when an anomaly is detected and the RCA is performed, the appropriate remediation action is executed automatically.",
-        "testStrategy": "Simulate anomalies and verify that the correct remediation actions are triggered based on the identified root cause.",
-        "priority": "high",
+        "title": "Implement Continuous Metrics Collection Mechanism",
+        "description": "Modify the SystemCollector to save collected metrics like 'cpu_percent' and 'memory_percent' into a persistent CSV file.",
+        "details": "1. Update the SystemCollector class to include functionality for creating a CSV file if it does not exist. 2. Implement logic to write headers ('timestamp', 'cpu_percent', 'memory_percent') to the CSV file upon creation. 3. In each monitoring cycle, append a new row with the current timestamp and the collected metrics to the CSV file. 4. Ensure proper handling of file I/O exceptions to prevent data loss. 5. Consider using the 'csv' module in Python for writing to the CSV file efficiently.",
+        "testStrategy": "1. Verify that the CSV file is created correctly with the appropriate headers when the SystemCollector is first run. 2. Simulate metric collection and check that new rows are appended correctly with the expected data format. 3. Test for proper error handling by simulating file access issues (e.g., read-only file system). 4. Ensure that the metrics collected match the expected values during the monitoring cycle.",
+        "status": "pending",
         "dependencies": [
-          6,
-          7,
-          8
+          1,
+          3
         ],
-        "status": "done",
+        "priority": "high",
         "subtasks": [
           {
             "id": 1,
-            "title": "Identify potential failure points in remediation actions",
-            "description": "Analyze the remediation engine to determine where failures might occur and what data or state would need to be saved to enable a rollback.",
+            "title": "Review existing class structure",
+            "description": "Examine the current class to understand its structure and identify areas that need modification.",
             "dependencies": [],
-            "details": "This involves reviewing the code and understanding the flow of the remediation actions.",
-            "status": "done",
+            "details": "Analyze the existing class to determine the necessary changes for CSV file handling.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 2,
-            "title": "Design rollback mechanism",
-            "description": "Create a plan for how to revert the system to a stable state in case of a failure.",
+            "title": "Add CSV file handling functionality",
+            "description": "Implement new methods in the class to handle reading and writing CSV files.",
             "dependencies": [
               1
             ],
-            "details": "This includes identifying the necessary steps and any additional data that needs to be stored.",
-            "status": "done",
+            "details": "Utilize the 'csv' module in Python to add functionality for reading and writing CSV files.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 3,
-            "title": "Implement rollback mechanism",
-            "description": "Code the rollback mechanism based on the design.",
+            "title": "Implement error handling for CSV operations",
+            "description": "Add error handling mechanisms to manage exceptions that may occur during CSV file operations.",
             "dependencies": [
-              1,
               2
             ],
-            "details": "This involves modifying the existing remediation engine code to include the rollback functionality.\n<info added on 2025-07-03T00:43:15.533Z>\nThe initial implementation added a safety mechanism (exclusion list) to the Remediator. This subtask will complete the rollback mechanism by implementing a post-remediation monitoring phase in the main loop. \n\nImplementation Plan:\n1. Modify `main.py`: After a remediation action is performed, the main loop will enter a 'monitoring state'.\n2. Monitoring State: The agent will perform 2-3 additional data collection cycles at a shorter interval (e.g., 5 seconds).\n3. Verification: During monitoring, it will check if the anomaly condition has been resolved.\n4. Outcome:\n   - If the anomaly is resolved, the agent returns to its normal monitoring interval.\n   - If the anomaly persists and is caused by the same offender, the `Remediator`'s exclusion list will prevent a remediation loop. The agent will log this and return to normal monitoring. \n\nThis ensures the agent confirms the outcome of its actions before proceeding.\n</info added on 2025-07-03T00:43:15.533Z>",
-            "status": "done",
+            "details": "Use try-except blocks to handle potential errors and provide informative error messages.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 4,
-            "title": "Test rollback mechanism",
-            "description": "Test the rollback mechanism to ensure it works correctly and does not introduce new issues.",
+            "title": "Test the modified class with sample CSV files",
+            "description": "Create sample CSV files and test the class to ensure the new functionality works as expected.",
             "dependencies": [
               3
             ],
-            "details": "This includes creating test cases that cover various failure scenarios.",
-            "status": "done",
+            "details": "Verify that the class can read and write CSV files correctly and handle errors gracefully.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Document the changes and update the class documentation",
+            "description": "Update the class documentation to reflect the new CSV file handling functionality.",
+            "dependencies": [
+              4
+            ],
+            "details": "Provide clear and concise documentation for the new methods and their usage.",
+            "status": "pending",
             "testStrategy": ""
           }
         ]
       },
       {
         "id": 10,
-        "title": "Implement Configuration Management",
-        "description": "Create a configuration management system for key parameters.",
-        "details": "Develop a configuration file (e.g., JSON or YAML) to manage parameters like monitoring intervals and thresholds. Implement functionality to read and apply these configurations.",
-        "testStrategy": "Change configuration parameters and verify that the agent behaves according to the new settings.",
-        "priority": "medium",
+        "title": "Implement File Rotation Mechanism for Metrics CSV",
+        "description": "Add a file rotation mechanism to the metrics collection system to prevent the CSV file from growing indefinitely by renaming it when a maximum number of rows is reached.",
+        "details": "1. Define a configurable maximum number of rows for the CSV file in the configuration settings. 2. Update the SystemCollector class to check the number of rows in the CSV file before appending new metrics. 3. If the maximum number of rows is reached, rename the current CSV file to a backup name (e.g., 'metrics_backup_<timestamp>.csv') and create a new CSV file for further data collection. 4. Ensure that the renaming and creation of the new file is handled safely, with proper error handling for file I/O operations. 5. Consider using the 'os' module for file operations and 'csv' module for writing to the CSV file.",
+        "testStrategy": "1. Verify that the maximum number of rows is configurable and that the system respects this limit during data collection. 2. Simulate the collection of metrics to ensure that when the limit is reached, the current CSV file is renamed correctly and a new file is created. 3. Check that the backup file contains the expected data and that the new file starts fresh without any previous data. 4. Test for proper error handling by simulating scenarios where file operations might fail (e.g., permission issues).",
+        "status": "pending",
         "dependencies": [
-          2
+          9
         ],
-        "status": "done",
+        "priority": "medium",
         "subtasks": [
           {
             "id": 1,
-            "title": "Design the user interface layout",
-            "description": "Create a wireframe for the user interface that clearly displays all agent parameters and their corresponding input fields.",
+            "title": "Configure the file rotation functionality",
+            "description": "Set up the necessary configurations for file rotation.",
             "dependencies": [],
-            "details": "The layout should be intuitive and easy to navigate, with clear labels and instructions for users.",
-            "status": "done",
+            "details": "This involves setting up the initial configurations for file rotation.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 2,
-            "title": "Implement the user interface",
-            "description": "Develop the user interface based on the wireframe, using appropriate programming languages and frameworks.",
+            "title": "Check row count",
+            "description": "Verify the row count of the files to be processed.",
             "dependencies": [
               1
             ],
-            "details": "Ensure that the interface is responsive and compatible with various devices and screen sizes.",
-            "status": "done",
+            "details": "This step ensures that the files have the correct number of rows before processing.",
+            "status": "pending",
             "testStrategy": ""
           },
           {
             "id": 3,
-            "title": "Test the user interface",
-            "description": "Conduct thorough testing of the user interface to ensure that all functionalities are working as expected.",
+            "title": "Rename files",
+            "description": "Rename the files according to the new naming convention.",
             "dependencies": [
               2
             ],
-            "details": "Test the interface on different devices and browsers to ensure compatibility and responsiveness.",
-            "status": "done",
+            "details": "This step involves renaming the files to match the new naming convention.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement error handling",
+            "description": "Add error handling for file I/O operations.",
+            "dependencies": [
+              3
+            ],
+            "details": "This step ensures that the file I/O operations are handled correctly and any errors are managed appropriately.",
+            "status": "pending",
             "testStrategy": ""
           }
         ]
       },
       {
         "id": 11,
-        "title": "Develop Comprehensive Logging for Actions",
-        "description": "Enhance logging to include detailed information about actions taken by the agent.",
-        "details": "Log details of each remediation action, including timestamps, metrics, predictions, and outcomes, in a structured format.",
-        "testStrategy": "Verify that all actions taken by the agent are logged correctly with all required details.",
-        "priority": "medium",
+        "title": "Implement Hot-Swap Functionality for IsolationForestPredictor",
+        "description": "Add a method to the IsolationForestPredictor class that allows for reloading the model from a file without restarting the agent.",
+        "details": "Implement the `reload_model` method in the IsolationForestPredictor class. This method should call the existing `load_model` method to reload the model from `model.joblib`. Ensure that the method handles exceptions gracefully, providing feedback if the model cannot be reloaded. Consider adding logging to track when the model is reloaded successfully or if any errors occur during the process.",
+        "testStrategy": "Write unit tests to verify that the `reload_model` method correctly reloads the model and handles errors appropriately. Simulate scenarios where the model file is present and absent, and check the output for both cases. Ensure that the model's predictions are consistent before and after reloading.",
+        "status": "pending",
         "dependencies": [
-          9
+          2,
+          3
         ],
-        "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Set up comprehensive logging for agent actions",
-            "description": "Implement logging for all agent actions to capture necessary data for analysis.",
-            "dependencies": [],
-            "details": "Use a logging framework to capture relevant information such as timestamps, action details, and any relevant parameters.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Develop log analysis tool",
-            "description": "Create a tool to analyze the collected logs and identify patterns and trends in agent behavior.",
-            "dependencies": [
-              1
-            ],
-            "details": "Implement algorithms to process and analyze the log data, and visualize the results.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Monitor agent behavior over time",
-            "description": "Use the log analysis tool to monitor agent behavior and identify any changes or trends.",
-            "dependencies": [
-              2
-            ],
-            "details": "Regularly review the analysis results and adjust the tool as needed to capture new patterns or trends.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 12,
-        "title": "Conduct Performance Testing",
-        "description": "Test the performance of the agent to ensure it meets non-functional requirements.",
-        "details": "Measure the resource consumption of the agent during data collection, prediction, and remediation processes. Optimize as necessary.",
-        "testStrategy": "Run performance tests under various loads and verify that resource usage remains within acceptable limits.",
-        "priority": "low",
-        "dependencies": [
-          3,
-          5,
-          9
-        ],
-        "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Set up performance testing environment",
-            "description": "Configure necessary tools and infrastructure for performance testing.",
-            "dependencies": [],
-            "details": "Select appropriate tools and set up the required environment for performance testing.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Develop automated performance test scripts",
-            "description": "Create scripts to simulate user actions and measure system performance.",
-            "dependencies": [
-              1
-            ],
-            "details": "Design and write test scripts that can be executed automatically to evaluate the system's performance.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 13,
-        "title": "Implement Security Measures",
-        "description": "Ensure the agent runs with minimum privileges necessary for its tasks.",
-        "details": "Review and implement security best practices for running the agent, including user permissions and data access controls.",
-        "testStrategy": "Conduct a security audit to ensure that the agent operates with the least privilege and does not expose sensitive data.",
-        "priority": "medium",
-        "dependencies": [
-          2
-        ],
-        "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Research and select appropriate security audit tools",
-            "description": "Investigate available security audit tools and select the most suitable ones for the agent based on features, compatibility, and ease of integration.",
-            "dependencies": [],
-            "details": "Compare features, compatibility, and ease of integration of various security audit tools.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Integrate selected security audit tools into the agent",
-            "description": "Integrate the chosen security audit tools into the agent's codebase, ensuring proper configuration and setup.",
-            "dependencies": [
-              1
-            ],
-            "details": "Follow the integration guidelines provided by the security audit tool vendors.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 3,
-            "title": "Set up a regular scanning schedule for the agent",
-            "description": "Configure the security audit tools to perform regular scans on the agent, identifying potential vulnerabilities.",
-            "dependencies": [
-              2
-            ],
-            "details": "Determine an appropriate frequency for the scans based on the agent's usage and risk profile.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 14,
-        "title": "Create User Documentation",
-        "description": "Develop documentation for users to configure and operate the agent.",
-        "details": "Write user documentation covering installation, configuration, and usage of the Self-Healing AI Agent.",
-        "testStrategy": "Review documentation for clarity and completeness, ensuring it provides all necessary information for users.",
-        "priority": "low",
-        "dependencies": [
-          10
-        ],
-        "status": "done",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Plan the video tutorial series structure",
-            "description": "Outline the topics to be covered in the video tutorials and their order.",
-            "dependencies": [],
-            "details": "Determine the number of tutorials, their length, and the content to be included in each.",
-            "status": "done",
-            "testStrategy": ""
-          },
-          {
-            "id": 2,
-            "title": "Create and record the video tutorials",
-            "description": "Develop and record the video content based on the planned structure.",
-            "dependencies": [
-              1
-            ],
-            "details": "Ensure high-quality audio and video, and include visual aids to support the content.",
-            "status": "done",
-            "testStrategy": ""
-          }
-        ]
-      },
-      {
-        "id": 15,
-        "title": "Conduct Final Testing and Validation",
-        "description": "Perform end-to-end testing of the entire system to validate functionality and performance.",
-        "details": "Test the complete workflow from data collection to remediation, ensuring all components work together seamlessly and meet requirements.",
-        "testStrategy": "Execute a series of test scenarios to validate the overall functionality and performance of the agent.",
         "priority": "high",
-        "dependencies": [
-          3,
-          5,
-          9,
-          11
-        ],
-        "status": "done",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add reload_model method",
+            "description": "Implement the reload_model method in the IsolationForestPredictor class to load a new model from a file.",
+            "dependencies": [],
+            "details": "The method should use the 'joblib' module to load the model from a specified file path.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Handle exceptions in reload_model",
+            "description": "Add exception handling to the reload_model method to manage potential errors when loading the model.",
+            "dependencies": [
+              1
+            ],
+            "details": "The exceptions should include 'FileNotFoundError', 'ValueError', and any other relevant exceptions.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add logging to reload_model",
+            "description": "Implement logging in the reload_model method to track when the model is reloaded.",
+            "dependencies": [
+              1
+            ],
+            "details": "The logging should include the file path of the loaded model and any relevant error messages.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       }
     ],
     "metadata": {
-      "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-03T04:02:19.230Z",
-      "description": "Tasks for master context"
+      "created": "2025-07-03T04:43:56.298Z",
+      "updated": "2025-07-03T04:55:21.472Z",
+      "description": "Tasks for feature-intel-preditiva context"
     }
   }
 }
