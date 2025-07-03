@@ -43,9 +43,9 @@ def setup_logger(name: str, level=None):
     Returns:
         A configured logger instance.
     """
-    config = get_config().get("logging", {})
+    config = get_config().logging
 
-    log_level_str = config.get("level", "INFO")
+    log_level_str = config.level
     log_level = getattr(logging, log_level_str.upper(), logging.INFO)
     
     # Allow overriding the config level
@@ -67,16 +67,16 @@ def setup_logger(name: str, level=None):
     logger.addHandler(stream_handler)
 
     # File Handler
-    log_file_path_str = config.get("log_file", "agent.log")
+    log_file_path_str = config.log_file
     log_file_path = Path(log_file_path_str)
     
     # Ensure the directory for the log file exists
     log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    when = config.get("rotation_when", "midnight")
-    interval = config.get("rotation_interval", 1)
-    backup_count = config.get("rotation_backup_count", 7)
-    compress = config.get("compress_on_rotate", False)
+    when = config.rotation_when
+    interval = config.rotation_interval
+    backup_count = config.rotation_backup_count
+    compress = config.compress_on_rotate
 
     handler_class = CompressedTimedRotatingFileHandler if compress else TimedRotatingFileHandler
 

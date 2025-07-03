@@ -4,3 +4,4 @@ pytest
 pytest-mock
 plotext
 numpy
+pydantic
