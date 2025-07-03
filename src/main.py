@@ -43,13 +43,11 @@ def main():
     log.info("Starting self-healing agent...")
 
     config = get_config()
-    main_loop_config = config.get("main_loop", {})
-    predictor_config = config.get("predictor", {})
-    interval_seconds = main_loop_config.get("interval_seconds", 60)
+    interval_seconds = config.main_loop.interval_seconds
     
     collector = SystemCollector()
-    predictor = Predictor(predictor_config)
-    remediator = Remediator(config.get("remediator", {}))
+    predictor = Predictor(config.predictor.dict())
+    remediator = Remediator(config.remediator.dict())
     visualizer = Visualizer()
 
     history = deque(maxlen=30)  # Store last 30 snapshots

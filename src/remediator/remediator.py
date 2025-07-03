@@ -10,6 +10,7 @@ class Remediator:
         self.config = config or {}
         self.action_history = []
         self.exclusion_list = {} # Temporarily exclude PIDs from being actioned on
+        self.exclusion_period_seconds = self.config.get("exclusion_period_seconds", 300)
 
     def _analyze_root_cause(self, snapshot: List[Dict[str, Any]], top_n: int = 1) -> List[Dict[str, Any]]:
         """
@@ -59,8 +60,8 @@ class Remediator:
                 # ALWAYS add to exclusion list after an action is taken.
                 # The verification step will determine if the anomaly is truly gone.
                 # This prevents repeat actions on the same PID during verification.
-                log.info(f"Adding PID {pid} to exclusion list for 5 minutes to prevent remediation loops.")
-                self.exclusion_list[pid] = time.time() + 300
+                log.info(f"Adding PID {pid} to exclusion list for {self.exclusion_period_seconds} seconds to prevent remediation loops.")
+                self.exclusion_list[pid] = time.time() + self.exclusion_period_seconds
 
                 if not success:
                     log.error(f"Remediation action failed for PID {pid}.")
