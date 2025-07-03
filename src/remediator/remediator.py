@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional
 from src.logger import setup_logger
 from .actions import kill_process_by_pid
 import time
+import json
 
 log = setup_logger(__name__)
 
@@ -51,11 +52,21 @@ class Remediator:
             if pid:
                 log.warning(f"Top memory offender identified: {offender.get('name')} (PID: {pid}). Taking action.")
                 
-                # Store action before execution
-                action_record = {'action': 'kill_process_by_pid', 'pid': pid, 'timestamp': time.time()}
-                self.action_history.append(action_record)
-
                 success = kill_process_by_pid(pid)
+                
+                action_record = {
+                    'action': 'kill_process_by_pid',
+                    'pid': pid,
+                    'offender_details': offender,
+                    'snapshot_context': snapshot,
+                    'success': success,
+                    'timestamp': time.time()
+                }
+                
+                # Log the entire action record as a JSON string
+                log.info(json.dumps(action_record))
+                
+                self.action_history.append(action_record)
 
                 # ALWAYS add to exclusion list after an action is taken.
                 # The verification step will determine if the anomaly is truly gone.
