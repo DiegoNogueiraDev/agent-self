@@ -567,7 +567,7 @@
           5,
           9
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -575,7 +575,7 @@
             "description": "Configure necessary tools and infrastructure for performance testing.",
             "dependencies": [],
             "details": "Select appropriate tools and set up the required environment for performance testing.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -586,7 +586,7 @@
               1
             ],
             "details": "Design and write test scripts that can be executed automatically to evaluate the system's performance.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -689,7 +689,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-03T02:19:06.945Z",
+      "updated": "2025-07-03T04:02:19.230Z",
       "description": "Tasks for master context"
     }
   }
