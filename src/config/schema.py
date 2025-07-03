@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from typing import Literal
+from typing import Literal, List
 
 class LoggingConfig(BaseModel):
     level: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] = 'INFO'
@@ -10,17 +10,22 @@ class LoggingConfig(BaseModel):
     compress_on_rotate: bool = True
 
 class PredictorConfig(BaseModel):
-    threshold: float = Field(0.8, ge=0.0, le=1.0)
-    metric: str = "memory_percent"
+    threshold: float = Field(80.0, ge=0.0, le=100.0)
+    metric: str = "cpu_percent"
 
 class MainLoopConfig(BaseModel):
-    interval_seconds: int = Field(60, gt=0)
+    interval_seconds: int = Field(10, gt=0)
 
 class RemediatorConfig(BaseModel):
     exclusion_period_seconds: int = Field(300, ge=0)
+    process_whitelist: List[str] = Field(default_factory=lambda: [
+        "cursor", "code", "firefox", "chrome", "gnome-shell", 
+        "systemd", "ssh", "bash", "python3", "docker", "containerd"
+    ])
+    min_memory_threshold: float = Field(5.0, ge=0.0, le=100.0)
 
 class AppConfig(BaseModel):
-    logging: LoggingConfig = Field(default_factory=LoggingConfig)
-    predictor: PredictorConfig = Field(default_factory=PredictorConfig)
-    main_loop: MainLoopConfig = Field(default_factory=MainLoopConfig)
-    remediator: RemediatorConfig = Field(default_factory=RemediatorConfig) 
+    logging: LoggingConfig
+    predictor: PredictorConfig
+    main_loop: MainLoopConfig
+    remediator: RemediatorConfig 
