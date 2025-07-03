@@ -1,3 +1,3 @@
-from .remediator import analyze_root_cause
+from .remediator import analyze_root_cause, Remediator
 
-__all__ = ["analyze_root_cause"]
+__all__ = ["analyze_root_cause", "Remediator"]

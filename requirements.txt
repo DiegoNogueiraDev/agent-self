@@ -3,3 +3,4 @@ PyYAML
 pytest
 pytest-mock
 plotext
+numpy

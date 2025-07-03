@@ -1,4 +1,4 @@
 from .base import BasePredictor
-from .predictor import MockPredictor, Predictor
+from .predictor import Predictor
 
-__all__ = ['BasePredictor', 'MockPredictor', 'Predictor']
+__all__ = ['BasePredictor', 'Predictor']

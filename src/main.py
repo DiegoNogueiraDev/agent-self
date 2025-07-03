@@ -4,8 +4,35 @@ from src.collector import SystemCollector
 from src.predictor import Predictor
 from src.config import get_config
 from src.logger import setup_logger
-from src.remediator import analyze_root_cause
+from src.remediator import Remediator
 from src.visualizer import Visualizer
+
+
+def verify_remediation(collector, predictor, remediator, log) -> bool:
+    """
+    Checks the system state for a few cycles after a remediation action.
+    """
+    log.info("Entering post-remediation verification state...")
+    verification_cycles = 3
+    short_interval = 5  # seconds
+
+    for i in range(verification_cycles):
+        log.info(f"Verification cycle {i+1}/{verification_cycles}...")
+        time.sleep(short_interval)
+        
+        snapshot = collector.collect()
+        prediction = predictor.predict(snapshot)
+
+        if prediction.get('is_anomaly'):
+            log.warning("Anomaly still present after remediation attempt.")
+            # The remediator's exclusion list will prevent immediate re-action
+            # on the same PID. We can try to remediate again in case a *different*
+            # root cause has emerged.
+            remediator.perform_remediation(snapshot)
+            return False # Verification failed
+
+    log.info("Verification successful. Anomaly appears to be resolved.")
+    return True
 
 
 def main():
@@ -22,6 +49,7 @@ def main():
     
     collector = SystemCollector()
     predictor = Predictor(predictor_config)
+    remediator = Remediator(config.get("remediator", {}))
     visualizer = Visualizer()
 
     history = deque(maxlen=30)  # Store last 30 snapshots
@@ -35,26 +63,28 @@ def main():
             history.append(snapshot)
             
             log.debug("Analyzing metrics for anomalies...")
-            prediction = predictor.predict(snapshot)
+            # Pass the system-level metrics to the predictor
+            prediction = predictor.predict(snapshot.get('system', {}))
 
             if prediction.get('is_anomaly', False):
-                log.warning("Anomaly detected! Initiating root cause analysis and visualization.")
+                log.warning("Anomaly detected! Initiating remediation and visualization.")
                 
-                # Analyze the snapshot that triggered the anomaly
-                top_offenders = analyze_root_cause(snapshot['processes'])
-                
-                if top_offenders:
-                    log.warning(f"Top memory offenders: {[p['name'] for p in top_offenders]}")
-                    # In a future task, we would take action here.
+                # Visualize the metric that caused the anomaly *before* remediation
+                metric_name = prediction.get("metric_checked")
+                threshold = prediction.get("threshold")
+                if metric_name and threshold is not None:
+                    visualizer.plot_metric(
+                        data=[s.get('system', {}) for s in history], 
+                        metric_name=metric_name, 
+                        threshold=threshold
+                    )
                 else:
-                    log.warning("RCA did not identify specific offending processes.")
+                    log.error("Cannot visualize anomaly: metric name or threshold not found in prediction.")
 
-                # Visualize the metric that caused the anomaly
-                visualizer.plot_metric(
-                    data=list(history), 
-                    metric_name=prediction.get("metric_checked"), 
-                    threshold=prediction.get("threshold")
-                )
+                remediator.perform_remediation(snapshot)
+
+                # Verify the outcome of the remediation
+                verify_remediation(collector, predictor, remediator, log)
 
             else:
                 log.info("System state is normal.")

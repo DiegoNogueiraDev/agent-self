@@ -418,7 +418,7 @@
           7,
           8
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -426,7 +426,7 @@
             "description": "Analyze the remediation engine to determine where failures might occur and what data or state would need to be saved to enable a rollback.",
             "dependencies": [],
             "details": "This involves reviewing the code and understanding the flow of the remediation actions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -437,7 +437,7 @@
               1
             ],
             "details": "This includes identifying the necessary steps and any additional data that needs to be stored.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -448,8 +448,8 @@
               1,
               2
             ],
-            "details": "This involves modifying the existing remediation engine code to include the rollback functionality.",
-            "status": "pending",
+            "details": "This involves modifying the existing remediation engine code to include the rollback functionality.\n<info added on 2025-07-03T00:43:15.533Z>\nThe initial implementation added a safety mechanism (exclusion list) to the Remediator. This subtask will complete the rollback mechanism by implementing a post-remediation monitoring phase in the main loop. \n\nImplementation Plan:\n1. Modify `main.py`: After a remediation action is performed, the main loop will enter a 'monitoring state'.\n2. Monitoring State: The agent will perform 2-3 additional data collection cycles at a shorter interval (e.g., 5 seconds).\n3. Verification: During monitoring, it will check if the anomaly condition has been resolved.\n4. Outcome:\n   - If the anomaly is resolved, the agent returns to its normal monitoring interval.\n   - If the anomaly persists and is caused by the same offender, the `Remediator`'s exclusion list will prevent a remediation loop. The agent will log this and return to normal monitoring. \n\nThis ensures the agent confirms the outcome of its actions before proceeding.\n</info added on 2025-07-03T00:43:15.533Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -460,7 +460,7 @@
               3
             ],
             "details": "This includes creating test cases that cover various failure scenarios.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": ""
           }
         ]
@@ -689,7 +689,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T04:57:30.994Z",
-      "updated": "2025-07-03T00:39:21.854Z",
+      "updated": "2025-07-03T00:43:40.674Z",
       "description": "Tasks for master context"
     }
   }
